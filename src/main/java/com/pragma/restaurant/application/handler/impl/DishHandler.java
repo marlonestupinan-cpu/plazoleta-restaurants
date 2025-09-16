@@ -1,6 +1,7 @@
 package com.pragma.restaurant.application.handler.impl;
 
 import com.pragma.restaurant.application.dto.request.CreateDishRequestDto;
+import com.pragma.restaurant.application.dto.request.UpdateDishRequestDto;
 import com.pragma.restaurant.application.handler.IDishHandler;
 import com.pragma.restaurant.application.mapper.ICreateDishRequestMapper;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
@@ -31,6 +32,19 @@ public class DishHandler implements IDishHandler {
 
         dish.setRestaurant(restaurant);
         dish.setCategory(category);
+
+        dishServicePort.saveDish(dish);
+    }
+
+    @Override
+    public void updateDish(UpdateDishRequestDto updateDishRequestDto) {
+        Dish dish = dishServicePort.getById(updateDishRequestDto.getId());
+        if (updateDishRequestDto.getPrice() != null) {
+            dish.setPrice(updateDishRequestDto.getPrice());
+        }
+        if (updateDishRequestDto.getDescription() != null) {
+            dish.setDescription(updateDishRequestDto.getDescription());
+        }
 
         dishServicePort.saveDish(dish);
     }
