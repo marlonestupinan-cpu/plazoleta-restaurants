@@ -3,7 +3,9 @@ package com.pragma.restaurant.infrastructure.exceptionhandler;
 import com.pragma.restaurant.domain.exception.DomainException;
 import com.pragma.restaurant.domain.exception.NotOwnerException;
 import com.pragma.restaurant.domain.exception.UserNotFoundException;
+import com.pragma.restaurant.infrastructure.exception.CategoryNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
+import com.pragma.restaurant.infrastructure.exception.RestaurantNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -55,5 +57,19 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.USER_NOT_FOUND.getMessage()));
     }
-    
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryNotFoundException(
+            CategoryNotFoundException categoryNotFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CATEGORY_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleRestaurantNotFoundException(
+            RestaurantNotFoundException restaurantNotFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.RESTAURANT_NOT_FOUND.getMessage()));
+    }
+
 }

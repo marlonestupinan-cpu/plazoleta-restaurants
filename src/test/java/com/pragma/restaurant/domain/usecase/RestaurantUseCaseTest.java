@@ -11,7 +11,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class RestaurantUseCaseTest {
 
@@ -57,5 +61,19 @@ class RestaurantUseCaseTest {
 
         assertEquals(2, restaurants.size());
         verify(restaurantPersistencePort, times(1)).getAllRestaurants();
+    }
+
+    @Test
+    void shouldGetRestaurantById() {
+        Long restaurantId = 1L;
+        Restaurant expectedRestaurant = new Restaurant();
+        expectedRestaurant.setId(restaurantId);
+        expectedRestaurant.setName("Crepes & Waffles");
+        when(restaurantPersistencePort.getRestaurantById(restaurantId)).thenReturn(expectedRestaurant);
+
+        Restaurant result = restaurantUseCase.getRestaurantById(restaurantId);
+
+        assertEquals(expectedRestaurant, result);
+        verify(restaurantPersistencePort, times(1)).getRestaurantById(restaurantId);
     }
 }

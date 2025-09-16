@@ -9,7 +9,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
 appDescription: "Restaurantes Plazoleta"
 appVersion: "1.0.0"
+
+categorias.map:
+  appetizer: "entrada"
+  breakfast: "desayuno"
+  salad: "ensalada"

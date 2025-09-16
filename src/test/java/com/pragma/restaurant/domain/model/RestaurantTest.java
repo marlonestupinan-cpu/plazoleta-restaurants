@@ -3,7 +3,8 @@ package com.pragma.restaurant.domain.model;
 import com.pragma.restaurant.domain.exception.DomainException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RestaurantTest {
 

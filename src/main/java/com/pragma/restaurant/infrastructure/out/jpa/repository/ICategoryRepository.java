@@ -1,0 +1,11 @@
+package com.pragma.restaurant.infrastructure.out.jpa.repository;
+
+import com.pragma.restaurant.infrastructure.out.jpa.entity.CategoryEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface ICategoryRepository extends JpaRepository<CategoryEntity,Long> {
+    Optional<CategoryEntity> findById(Long id);
+    Optional<CategoryEntity> findByName(String categoryName);
+}

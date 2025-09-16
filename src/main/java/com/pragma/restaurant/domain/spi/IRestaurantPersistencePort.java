@@ -7,4 +7,5 @@ import java.util.List;
 public interface IRestaurantPersistencePort {
     void saveRestaurant(Restaurant restaurant);
     List<Restaurant> getAllRestaurants();
+    Restaurant getRestaurantById(Long id);
 }
