@@ -14,6 +14,7 @@ import java.util.List;
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
     private final IRestaurantEntityMapper restaurantEntityMapper;
+
     @Override
     public void saveRestaurant(Restaurant restaurant) {
         restaurantRepository.save(restaurantEntityMapper.toEntity(restaurant));
@@ -26,5 +27,13 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
             throw new NoDataFoundException();
         }
         return restaurantEntityMapper.toRestaurantList(restaurants);
+    }
+
+    @Override
+    public Restaurant getRestaurantById(Long id) {
+        return restaurantRepository
+                .findById(id)
+                .map(restaurantEntityMapper::toRestaurant)
+                .orElseThrow(NoDataFoundException::new);
     }
 }
