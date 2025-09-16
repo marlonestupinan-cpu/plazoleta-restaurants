@@ -15,7 +15,7 @@ public class Dish {
     private Category category;
 
     public void setPrice(Integer price) {
-        if (price < 0) {
+        if (price <= 0) {
             throw new DomainException("El precio debe ser un entero positivo");
         }
         this.price = price;
