@@ -12,4 +12,9 @@ public class DishUseCase implements IDishServicePort {
     public void saveDish(Dish dish) {
         dishPersistencePort.saveDish(dish);
     }
+
+    @Override
+    public Dish getById(Long id) {
+        return dishPersistencePort.getById(id);
+    }
 }
