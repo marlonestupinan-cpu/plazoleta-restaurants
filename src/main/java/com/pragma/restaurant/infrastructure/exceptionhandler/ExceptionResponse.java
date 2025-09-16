@@ -1,9 +1,9 @@
 package com.pragma.restaurant.infrastructure.exceptionhandler;
 
 public enum ExceptionResponse {
-    NO_DATA_FOUND("No data found for the requested petition");
-
-    private final String message;
+    NO_DATA_FOUND("No se encontraron datos para la petición"),
+    NOT_OWNER("El usuario no es un propietario"),
+    USER_NOT_FOUND("Usuario no encontrado");    private final String message;
 
     ExceptionResponse(String message) {
         this.message = message;

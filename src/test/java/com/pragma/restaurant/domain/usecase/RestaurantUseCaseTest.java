@@ -15,11 +15,13 @@ class RestaurantUseCaseTest {
 
     private IRestaurantPersistencePort restaurantPersistencePort;
     private RestaurantUseCase restaurantUseCase;
+    private UserUseCase userUseCase;
 
     @BeforeEach
     void setUp() {
         restaurantPersistencePort = mock(IRestaurantPersistencePort.class);
-        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort);
+        userUseCase = mock(UserUseCase.class);
+        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, userUseCase);
     }
 
     @Test
