@@ -1,18 +1,24 @@
 package com.pragma.restaurant.infrastructure.configuration;
 
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
+import com.pragma.restaurant.domain.api.IDishServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
 import com.pragma.restaurant.domain.api.IUserServicePort;
 import com.pragma.restaurant.domain.spi.ICategoryPersistencePort;
+import com.pragma.restaurant.domain.spi.IDishPersistencePort;
 import com.pragma.restaurant.domain.spi.IRestaurantPersistencePort;
 import com.pragma.restaurant.domain.usecase.CategoryUseCase;
+import com.pragma.restaurant.domain.usecase.DishUseCase;
 import com.pragma.restaurant.domain.usecase.RestaurantUseCase;
 import com.pragma.restaurant.domain.usecase.UserUseCase;
 import com.pragma.restaurant.infrastructure.out.jpa.adapter.CategoryJpaAdapter;
+import com.pragma.restaurant.infrastructure.out.jpa.adapter.DishJpaAdapter;
 import com.pragma.restaurant.infrastructure.out.jpa.adapter.RestaurantJpaAdapter;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.ICategoryEntityMapper;
+import com.pragma.restaurant.infrastructure.out.jpa.mapper.IDishEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.IRestaurantEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.ICategoryRepository;
+import com.pragma.restaurant.infrastructure.out.jpa.repository.IDishRepository;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +34,9 @@ public class BeanConfiguration {
     private final ICategoryRepository categoryRepository;
     private final ICategoryEntityMapper categoryEntityMapper;
 
+    private final IDishRepository dishRepository;
+    private final IDishEntityMapper dishEntityMapper;
+
     private final WebClient.Builder webClientBuilder;
 
     @Bean
@@ -41,6 +50,11 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public IDishPersistencePort dishPersistencePort() {
+        return new DishJpaAdapter(dishRepository, dishEntityMapper);
+    }
+
+    @Bean
     public IUserServicePort userServicePort() {
         return new UserUseCase(webClientBuilder.build());
     }
@@ -48,6 +62,11 @@ public class BeanConfiguration {
     @Bean
     public ICategoryServicePort categoryServicePort() {
         return new CategoryUseCase(categoryPersistencePort());
+    }
+
+    @Bean
+    public IDishServicePort dishServicePort() {
+        return new DishUseCase(dishPersistencePort());
     }
 
     @Bean

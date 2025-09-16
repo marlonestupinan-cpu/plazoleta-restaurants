@@ -2,6 +2,7 @@ package com.pragma.restaurant.infrastructure.out.jpa.adapter;
 
 import com.pragma.restaurant.domain.model.Category;
 import com.pragma.restaurant.domain.spi.ICategoryPersistencePort;
+import com.pragma.restaurant.infrastructure.exception.CategoryNotFoundException;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.ICategoryEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.ICategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,6 @@ public class CategoryJpaAdapter implements ICategoryPersistencePort {
     public Category getCategoryById(Long id) {
         return categoryRepository.findById(id)
                 .map(categoryEntityMapper::toCategory)
-                .orElse(null);
+                .orElseThrow(CategoryNotFoundException::new);
     }
 }

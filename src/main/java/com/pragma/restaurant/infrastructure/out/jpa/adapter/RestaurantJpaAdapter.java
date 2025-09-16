@@ -3,6 +3,7 @@ package com.pragma.restaurant.infrastructure.out.jpa.adapter;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.domain.spi.IRestaurantPersistencePort;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
+import com.pragma.restaurant.infrastructure.exception.RestaurantNotFoundException;
 import com.pragma.restaurant.infrastructure.out.jpa.entity.RestaurantEntity;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.IRestaurantEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IRestaurantRepository;
@@ -34,6 +35,6 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
         return restaurantRepository
                 .findById(id)
                 .map(restaurantEntityMapper::toRestaurant)
-                .orElseThrow(NoDataFoundException::new);
+                .orElseThrow(RestaurantNotFoundException::new);
     }
 }
