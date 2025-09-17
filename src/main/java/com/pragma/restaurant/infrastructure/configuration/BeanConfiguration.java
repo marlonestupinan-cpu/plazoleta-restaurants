@@ -1,5 +1,7 @@
 package com.pragma.restaurant.infrastructure.configuration;
 
+import com.pragma.restaurant.application.handler.ITokenGenerator;
+import com.pragma.restaurant.application.handler.impl.auth.jwt.JwtGenerator;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
 import com.pragma.restaurant.domain.api.IDishServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
@@ -72,5 +74,10 @@ public class BeanConfiguration {
     @Bean
     public IRestaurantServicePort restaurantServicePort() {
         return new RestaurantUseCase(restaurantPersistencePort(), userServicePort());
+    }
+
+    @Bean
+    public ITokenGenerator tokenGenerator() {
+        return new JwtGenerator();
     }
 }
