@@ -48,4 +48,17 @@ public class DishHandler implements IDishHandler {
 
         dishServicePort.saveDish(dish, ownerId);
     }
+
+    @Override
+    public void updateDish(UpdateDishRequestDto updateDishRequestDto) {
+        Dish dish = dishServicePort.getById(updateDishRequestDto.getId());
+        if (updateDishRequestDto.getPrice() != null) {
+            dish.setPrice(updateDishRequestDto.getPrice());
+        }
+        if (updateDishRequestDto.getDescription() != null) {
+            dish.setDescription(updateDishRequestDto.getDescription());
+        }
+
+        dishServicePort.saveDish(dish);
+    }
 }

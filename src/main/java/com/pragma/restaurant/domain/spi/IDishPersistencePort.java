@@ -4,4 +4,6 @@ import com.pragma.restaurant.domain.model.Dish;
 
 public interface IDishPersistencePort {
     void saveDish(Dish dish);
+
+    Dish getById(Long id);
 }
