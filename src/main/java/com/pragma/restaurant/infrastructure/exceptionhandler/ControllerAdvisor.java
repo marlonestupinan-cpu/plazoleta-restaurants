@@ -2,8 +2,10 @@ package com.pragma.restaurant.infrastructure.exceptionhandler;
 
 import com.pragma.restaurant.domain.exception.DomainException;
 import com.pragma.restaurant.domain.exception.NotOwnerException;
+import com.pragma.restaurant.domain.exception.NotRestaurantOwnerException;
 import com.pragma.restaurant.domain.exception.UserNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.CategoryNotFoundException;
+import com.pragma.restaurant.infrastructure.exception.DishNoFoundException;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
 import com.pragma.restaurant.infrastructure.exception.RestaurantNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -72,4 +74,17 @@ public class ControllerAdvisor {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.RESTAURANT_NOT_FOUND.getMessage()));
     }
 
+    @ExceptionHandler(DishNoFoundException.class)
+    public ResponseEntity<Map<String, String>> handleDishNoFoundException(
+            DishNoFoundException dishNoFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(NotRestaurantOwnerException.class)
+    public ResponseEntity<Map<String, String>> handleNotRestaurantOwnerException(
+            NotRestaurantOwnerException notOwnerException) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_RESTAURANT_OWNER.getMessage()));
+    }
 }

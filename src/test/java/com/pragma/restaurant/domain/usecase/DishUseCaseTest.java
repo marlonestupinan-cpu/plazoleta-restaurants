@@ -1,6 +1,7 @@
 package com.pragma.restaurant.domain.usecase;
 
 import com.pragma.restaurant.domain.model.Dish;
+import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.domain.spi.IDishPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,12 @@ class DishUseCaseTest {
         dish.setName("Ajiaco Santafereño");
         dish.setPrice(25000);
 
-        dishUseCase.saveDish(dish);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setIdOwner(1L);
+
+        dish.setRestaurant(restaurant);
+
+        dishUseCase.saveDish(dish, 1L);
 
         verify(dishPersistencePort, times(1)).saveDish(dish);
     }

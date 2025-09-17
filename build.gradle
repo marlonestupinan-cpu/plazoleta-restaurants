@@ -36,8 +36,10 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
 
     developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
-	testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-
+	testImplementation ("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+        exclude group: 'org.mockito', module: 'mockito-core'
+    }
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
 	runtimeOnly "mysql:mysql-connector-java:${mySqlConnectorVersion}"
 
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
