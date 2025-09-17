@@ -1,6 +1,7 @@
 package com.pragma.restaurant.infrastructure.input.rest;
 
 import com.pragma.restaurant.application.dto.request.CreateDishRequestDto;
+import com.pragma.restaurant.application.dto.request.UpdateDishRequestDto;
 import com.pragma.restaurant.application.handler.IDishHandler;
 import com.pragma.restaurant.infrastructure.configuration.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
