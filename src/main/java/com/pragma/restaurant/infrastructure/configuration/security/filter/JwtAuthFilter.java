@@ -1,6 +1,7 @@
 package com.pragma.restaurant.infrastructure.configuration.security.filter;
 
 import com.pragma.restaurant.application.handler.impl.auth.jwt.JwtGenerator;
+import com.pragma.restaurant.infrastructure.configuration.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
         final String authToken = authHeader.substring(7);
+        final Long id = jwtGenerator.extractId(authToken);
         final String email = jwtGenerator.extractUsername(authToken);
         final String role = jwtGenerator.extractRole(authToken);
         if (email == null || SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -42,7 +44,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+        UserDetails userDetails = new CustomUserDetails(
+                id,
                 email,
                 "",
                 List.of(new SimpleGrantedAuthority("ROLE_" + role))
