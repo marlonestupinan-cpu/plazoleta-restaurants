@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,24 @@ public class DishRestController {
             @RequestBody @Valid UpdateDishRequestDto dish,
             @AuthenticationPrincipal CustomUserDetails user) {
         dishHandler.updateDish(dish, user.getId());
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/{id}/activate")
+    @PreAuthorize("hasRole('PROPIETARIO')")
+    public ResponseEntity<Void> activateDish(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        dishHandler.setState(id, user.getId(), true);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/{id}/deactivate")
+    @PreAuthorize("hasRole('PROPIETARIO')")
+    public ResponseEntity<Void> deactivateDish(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        dishHandler.setState(id, user.getId(), false);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

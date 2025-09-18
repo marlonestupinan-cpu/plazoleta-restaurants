@@ -48,4 +48,11 @@ public class DishHandler implements IDishHandler {
 
         dishServicePort.saveDish(dish, ownerId);
     }
+
+    @Override
+    public void setState(Long idDish, Long idOwner, boolean state) {
+        Dish dish = dishServicePort.getById(idDish);
+        dish.setActive(state);
+        dishServicePort.saveDish(dish, idOwner);
+    }
 }
