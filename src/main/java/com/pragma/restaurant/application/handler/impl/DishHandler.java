@@ -2,7 +2,9 @@ package com.pragma.restaurant.application.handler.impl;
 
 import com.pragma.restaurant.application.dto.request.CreateDishRequestDto;
 import com.pragma.restaurant.application.dto.request.UpdateDishRequestDto;
+import com.pragma.restaurant.application.dto.response.ClientDishResponseDto;
 import com.pragma.restaurant.application.handler.IDishHandler;
+import com.pragma.restaurant.application.mapper.IClientDishResponseMapper;
 import com.pragma.restaurant.application.mapper.ICreateDishRequestMapper;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
 import com.pragma.restaurant.domain.api.IDishServicePort;
@@ -11,6 +13,8 @@ import com.pragma.restaurant.domain.model.Category;
 import com.pragma.restaurant.domain.model.Dish;
 import com.pragma.restaurant.domain.model.Restaurant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,6 +24,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class DishHandler implements IDishHandler {
     private final ICreateDishRequestMapper createDishRequestMapper;
+    private final IClientDishResponseMapper clientDishResponseMapper;
     private final IDishServicePort  dishServicePort;
     private final IRestaurantServicePort  restaurantServicePort;
     private final ICategoryServicePort  categoryServicePort;
@@ -54,5 +59,10 @@ public class DishHandler implements IDishHandler {
         Dish dish = dishServicePort.getById(idDish);
         dish.setActive(state);
         dishServicePort.saveDish(dish, idOwner);
+    }
+
+    @Override
+    public Page<ClientDishResponseDto> getAllDishesFromRestaurant(Long restaurantId, Pageable pageable, Long categoryId) {
+        return clientDishResponseMapper.toPageResponseList(dishServicePort.getAllDishesFromRestaurant(restaurantId, pageable, categoryId));
     }
 }

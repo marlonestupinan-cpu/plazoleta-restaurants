@@ -2,6 +2,7 @@ package com.pragma.restaurant.application.handler;
 
 import com.pragma.restaurant.application.dto.request.CreateDishRequestDto;
 import com.pragma.restaurant.application.handler.impl.DishHandler;
+import com.pragma.restaurant.application.mapper.IClientDishResponseMapper;
 import com.pragma.restaurant.application.mapper.ICreateDishRequestMapper;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
 import com.pragma.restaurant.domain.api.IDishServicePort;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
 class DishHandlerTest {
 
     private final ICreateDishRequestMapper createDishRequestMapper = Mappers.getMapper(ICreateDishRequestMapper.class);
+    private final IClientDishResponseMapper clientDishResponseMapper = Mappers.getMapper(IClientDishResponseMapper.class);
     private IDishServicePort dishServicePort;
     private IRestaurantServicePort restaurantServicePort;
     private ICategoryServicePort categoryServicePort;
@@ -36,6 +38,7 @@ class DishHandlerTest {
         categoryServicePort = mock(ICategoryServicePort.class);
         dishHandler = new DishHandler(
                 createDishRequestMapper,
+                clientDishResponseMapper,
                 dishServicePort,
                 restaurantServicePort,
                 categoryServicePort
