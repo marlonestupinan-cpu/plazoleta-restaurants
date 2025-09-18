@@ -15,6 +15,7 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -62,10 +63,10 @@ class DishHandlerTest {
         when(restaurantServicePort.getRestaurantById(1L)).thenReturn(mockRestaurant);
         when(categoryServicePort.getCategoryById(2L)).thenReturn(mockCategory);
 
-        dishHandler.saveDish(expectedDish);
+        dishHandler.saveDish(expectedDish, 1L);
 
         ArgumentCaptor<Dish> dishCaptor = ArgumentCaptor.forClass(Dish.class);
-        verify(dishServicePort).saveDish(dishCaptor.capture());
+        verify(dishServicePort).saveDish(dishCaptor.capture(), eq(1L));
         Dish realDish = dishCaptor.getValue();
 
         assertEquals("Cazuela de Mariscos", realDish.getName());

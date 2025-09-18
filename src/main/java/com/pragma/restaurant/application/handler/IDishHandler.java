@@ -4,6 +4,6 @@ import com.pragma.restaurant.application.dto.request.CreateDishRequestDto;
 import com.pragma.restaurant.application.dto.request.UpdateDishRequestDto;
 
 public interface IDishHandler {
-    void saveDish(CreateDishRequestDto createDishRequestDto);
-    void updateDish(UpdateDishRequestDto updateDishRequestDto);
+    void saveDish(CreateDishRequestDto createDishRequestDto, Long ownerId);
+    void updateDish(UpdateDishRequestDto updateDishRequestDto, Long ownerId);
 }

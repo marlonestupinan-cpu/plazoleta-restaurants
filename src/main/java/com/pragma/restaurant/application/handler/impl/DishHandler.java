@@ -25,7 +25,7 @@ public class DishHandler implements IDishHandler {
     private final ICategoryServicePort  categoryServicePort;
 
     @Override
-    public void saveDish(CreateDishRequestDto createDishRequestDto) {
+    public void saveDish(CreateDishRequestDto createDishRequestDto, Long ownerId) {
         Dish dish = createDishRequestMapper.toDish(createDishRequestDto);
         Restaurant restaurant = restaurantServicePort.getRestaurantById(createDishRequestDto.getIdRestaurant());
         Category category = categoryServicePort.getCategoryById(createDishRequestDto.getIdCategory());
@@ -33,11 +33,11 @@ public class DishHandler implements IDishHandler {
         dish.setRestaurant(restaurant);
         dish.setCategory(category);
 
-        dishServicePort.saveDish(dish);
+        dishServicePort.saveDish(dish, ownerId);
     }
 
     @Override
-    public void updateDish(UpdateDishRequestDto updateDishRequestDto) {
+    public void updateDish(UpdateDishRequestDto updateDishRequestDto, Long ownerId) {
         Dish dish = dishServicePort.getById(updateDishRequestDto.getId());
         if (updateDishRequestDto.getPrice() != null) {
             dish.setPrice(updateDishRequestDto.getPrice());
@@ -46,6 +46,6 @@ public class DishHandler implements IDishHandler {
             dish.setDescription(updateDishRequestDto.getDescription());
         }
 
-        dishServicePort.saveDish(dish);
+        dishServicePort.saveDish(dish, ownerId);
     }
 }

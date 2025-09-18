@@ -6,7 +6,8 @@ public enum ExceptionResponse {
     USER_NOT_FOUND("Usuario no encontrado"),
     CATEGORY_NOT_FOUND("Categoria no encontrada"),
     RESTAURANT_NOT_FOUND("Restaurante no encontrado"),
-    DISH_NOT_FOUND("Plato no encontrado");
+    DISH_NOT_FOUND("Plato no encontrado"),
+    NOT_RESTAURANT_OWNER("El usuario no coincide con el propietario del restaurante");
 
     private final String message;
 

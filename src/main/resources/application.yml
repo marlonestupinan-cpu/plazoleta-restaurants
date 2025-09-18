@@ -1,6 +1,11 @@
 server:
   port: 8082
 
+application:
+  security:
+    jwt:
+      secret-key: 19b02086edcba74510ff59eaa84183b78ffdd8c8f3888de4aa831f9acddcbec9
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/restaurantes_plazoleta
