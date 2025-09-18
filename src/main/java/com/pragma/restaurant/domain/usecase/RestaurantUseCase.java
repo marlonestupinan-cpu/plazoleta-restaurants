@@ -6,8 +6,8 @@ import com.pragma.restaurant.domain.exception.NotOwnerException;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.domain.spi.IRestaurantPersistencePort;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class RestaurantUseCase implements IRestaurantServicePort {
@@ -23,8 +23,8 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantPersistencePort.getAllRestaurants();
+    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+        return restaurantPersistencePort.getAllRestaurants(pageable);
     }
 
     @Override

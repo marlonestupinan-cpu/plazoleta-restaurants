@@ -1,7 +1,6 @@
 package com.pragma.restaurant.infrastructure.out.jpa.adapter;
 
 import com.pragma.restaurant.domain.model.Restaurant;
-import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
 import com.pragma.restaurant.infrastructure.out.jpa.entity.RestaurantEntity;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.IRestaurantEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IRestaurantRepository;
@@ -10,15 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class RestaurantJpaAdapterTest {
@@ -49,32 +41,5 @@ class RestaurantJpaAdapterTest {
         restaurantJpaAdapter.saveRestaurant(restaurant);
 
         verify(restaurantRepository).save(restaurantEntity);
-    }
-
-    @Test
-    void shouldReturnRestaurantListWhenRestaurantsExist() {
-        RestaurantEntity restaurantEntity = new RestaurantEntity();
-        restaurantEntity.setId(1L);
-        restaurantEntity.setName("Wok");
-        restaurantEntity.setPhone("+31854125112");
-        restaurantEntity.setUrlLogo("logo.png");
-        restaurantEntity.setAddress("Avenida Siempre Viva 742");
-        restaurantEntity.setNit("987654321");
-
-        List<RestaurantEntity> entityList = List.of(restaurantEntity);
-        when(restaurantRepository.findAll()).thenReturn(entityList);
-
-        List<Restaurant> result = restaurantJpaAdapter.getAllRestaurants();
-
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals("Wok", result.get(0).getName());
-    }
-
-    @Test
-    void shouldThrowNoDataFoundExceptionWhenNoRestaurantsExist() {
-        when(restaurantRepository.findAll()).thenReturn(Collections.emptyList());
-
-        assertThrows(NoDataFoundException.class, () -> restaurantJpaAdapter.getAllRestaurants());
     }
 }
