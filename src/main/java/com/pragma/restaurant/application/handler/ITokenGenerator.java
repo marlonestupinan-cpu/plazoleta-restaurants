@@ -7,6 +7,7 @@ public interface ITokenGenerator {
     String extractUsername(String token);
     String extractRole(String token);
     Long extractId(String token);
+    Long extractOwnerId(String token);
     Date extractExpiration(String token);
     boolean validateTokenExpired(String token);
 }

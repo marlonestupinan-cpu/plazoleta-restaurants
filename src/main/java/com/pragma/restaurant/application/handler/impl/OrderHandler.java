@@ -1,7 +1,9 @@
 package com.pragma.restaurant.application.handler.impl;
 
 import com.pragma.restaurant.application.dto.request.CreateOrderRequestDto;
+import com.pragma.restaurant.application.dto.response.OrderResponseDto;
 import com.pragma.restaurant.application.handler.IOrderHandler;
+import com.pragma.restaurant.application.mapper.IOrderResponseMapper;
 import com.pragma.restaurant.domain.api.IDishServicePort;
 import com.pragma.restaurant.domain.api.IOrderServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
@@ -11,6 +13,8 @@ import com.pragma.restaurant.domain.model.OrderDish;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,7 +28,9 @@ import java.util.stream.Collectors;
 public class OrderHandler implements IOrderHandler {
     private final IOrderServicePort orderService;
     private final IRestaurantServicePort restaurantService;
-    private final IDishServicePort  dishService;
+    private final IDishServicePort dishService;
+    private final IOrderResponseMapper orderResponseMapper;
+
     @Override
     public void saveNewOrder(CreateOrderRequestDto order, Long idClient) {
         Restaurant restaurant = restaurantService.getRestaurantById(order.getIdRestaurant());
@@ -51,5 +57,12 @@ public class OrderHandler implements IOrderHandler {
 
         orderToSave.setOrderDishes(orderDishes);
         orderService.saveOrder(orderToSave);
+    }
+
+    @Override
+    public Page<OrderResponseDto> getAllOrders(Long idOwner, Pageable pageable, Integer state) {
+        Restaurant restaurant = restaurantService.getOwnerRestaurant(idOwner);
+
+        return orderResponseMapper.toPageResponseList(orderService.getAllRestaurantOrders(restaurant.getId(), pageable, state));
     }
 }

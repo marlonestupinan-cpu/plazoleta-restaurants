@@ -7,6 +7,8 @@ import com.pragma.restaurant.infrastructure.out.jpa.mapper.CycleAvoidingMappingC
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.IOrderEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IOrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -25,5 +27,19 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
         return orderRepository.getFirstByIdClientAndStateIsIn(idClient, validStates)
                 .map((OrderEntity orderEntity) -> orderEntityMapper.toOrder(orderEntity, new CycleAvoidingMappingContext()))
                 .orElse(null);
+    }
+
+    @Override
+    public Page<Order> getAllRestaurantOrders(Long idRestaurant, Pageable paginator, Integer state) {
+        Order.OrderState orderState = Order.OrderState.getState(state);
+        Page<OrderEntity> orders;
+        if (state == null) {
+            orders = orderRepository.findAllByRestaurantId(idRestaurant, paginator);
+        }
+        else {
+            orders = orderRepository.findAllByRestaurantIdAndState(idRestaurant, orderState, paginator);
+        }
+
+        return orderEntityMapper.toPageOrderList(orders, new CycleAvoidingMappingContext());
     }
 }

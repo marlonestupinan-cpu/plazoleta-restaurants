@@ -18,7 +18,13 @@ public class Order {
         WORKING,
         FINISHED,
         CANCELED,
-        DELIVERED
+        DELIVERED;
+
+        public static OrderState getState(Integer state) {
+            var states = values();
+            if (state < 0 || state >= states.length) return null;
+            return states[state];
+        }
     }
 
     private Long id;

@@ -8,4 +8,5 @@ public interface IRestaurantServicePort {
     void saveRestaurant(Restaurant restaurant);
     Page<Restaurant> getAllRestaurants(Pageable pageable);
     Restaurant getRestaurantById(Long id);
+    Restaurant getOwnerRestaurant(Long idOwner);
 }
