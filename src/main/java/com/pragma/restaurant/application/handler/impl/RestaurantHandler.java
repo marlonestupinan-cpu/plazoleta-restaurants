@@ -1,16 +1,18 @@
 package com.pragma.restaurant.application.handler.impl;
 
 import com.pragma.restaurant.application.dto.request.CreateRestaurantRequestDto;
-import com.pragma.restaurant.application.dto.response.RestaurantResponseDto;
+import com.pragma.restaurant.application.dto.response.ClientRestaurantResponseDto;
 import com.pragma.restaurant.application.handler.IRestaurantHandler;
+import com.pragma.restaurant.application.mapper.IClientRestaurantResponseMapper;
 import com.pragma.restaurant.application.mapper.ICreateRestaurantRequestMapper;
 import com.pragma.restaurant.application.mapper.IRestaurantResponseMapper;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ import java.util.List;
 public class RestaurantHandler implements IRestaurantHandler {
     private final ICreateRestaurantRequestMapper createRestaurantRequestMapper;
     private final IRestaurantResponseMapper restaurantResponseMapper;
+    private final IClientRestaurantResponseMapper clientRestaurantResponseMapper;
     private final IRestaurantServicePort restaurantService;
 
     @Override
@@ -26,7 +29,7 @@ public class RestaurantHandler implements IRestaurantHandler {
     }
 
     @Override
-    public List<RestaurantResponseDto> getAllRestaurants() {
-        return restaurantResponseMapper.toResponseList(restaurantService.getAllRestaurants());
+    public Page<ClientRestaurantResponseDto> getAllRestaurants(Pageable pageable) {
+        return clientRestaurantResponseMapper.toPageResponseList(restaurantService.getAllRestaurants(pageable));
     }
 }

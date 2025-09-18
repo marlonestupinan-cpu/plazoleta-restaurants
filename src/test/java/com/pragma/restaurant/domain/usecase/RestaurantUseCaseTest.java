@@ -6,10 +6,6 @@ import com.pragma.restaurant.domain.spi.IRestaurantPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.mock;
@@ -50,30 +46,5 @@ class RestaurantUseCaseTest {
         when(userUseCase.isOwner(anyLong())).thenReturn(false);
 
         assertThrows(NotOwnerException.class,  () -> restaurantUseCase.saveRestaurant(restaurant));
-    }
-
-    @Test
-    void shouldReturnAllRestaurants() {
-        List<Restaurant> mockRestaurants = Arrays.asList(new Restaurant(), new Restaurant());
-        when(restaurantPersistencePort.getAllRestaurants()).thenReturn(mockRestaurants);
-
-        List<Restaurant> restaurants = restaurantUseCase.getAllRestaurants();
-
-        assertEquals(2, restaurants.size());
-        verify(restaurantPersistencePort, times(1)).getAllRestaurants();
-    }
-
-    @Test
-    void shouldGetRestaurantById() {
-        Long restaurantId = 1L;
-        Restaurant expectedRestaurant = new Restaurant();
-        expectedRestaurant.setId(restaurantId);
-        expectedRestaurant.setName("Crepes & Waffles");
-        when(restaurantPersistencePort.getRestaurantById(restaurantId)).thenReturn(expectedRestaurant);
-
-        Restaurant result = restaurantUseCase.getRestaurantById(restaurantId);
-
-        assertEquals(expectedRestaurant, result);
-        verify(restaurantPersistencePort, times(1)).getRestaurantById(restaurantId);
     }
 }

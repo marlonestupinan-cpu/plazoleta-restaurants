@@ -8,8 +8,8 @@ import com.pragma.restaurant.infrastructure.out.jpa.entity.RestaurantEntity;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.IRestaurantEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
@@ -22,12 +22,12 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     }
 
     @Override
-    public List<Restaurant> getAllRestaurants() {
-        List<RestaurantEntity> restaurants = restaurantRepository.findAll();
+    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+        Page<RestaurantEntity> restaurants = restaurantRepository.findAll(pageable);
         if (restaurants.isEmpty()) {
             throw new NoDataFoundException();
         }
-        return restaurantEntityMapper.toRestaurantList(restaurants);
+        return restaurantEntityMapper.toPageRestaurantList(restaurants);
     }
 
     @Override
