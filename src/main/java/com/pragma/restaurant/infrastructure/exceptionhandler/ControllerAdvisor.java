@@ -4,6 +4,7 @@ import com.pragma.restaurant.domain.exception.DomainException;
 import com.pragma.restaurant.domain.exception.NotOwnerException;
 import com.pragma.restaurant.domain.exception.NotRestaurantOwnerException;
 import com.pragma.restaurant.domain.exception.UserNotFoundException;
+import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
 import com.pragma.restaurant.infrastructure.exception.CategoryNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.DishNoFoundException;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
@@ -86,5 +87,12 @@ public class ControllerAdvisor {
             NotRestaurantOwnerException notOwnerException) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_RESTAURANT_OWNER.getMessage()));
+    }
+
+    @ExceptionHandler(AlreadyClientOrderActiveException.class)
+    public ResponseEntity<Map<String, String>> handleAlreadyClientOrderActiveException(
+            AlreadyClientOrderActiveException alreadyClientOrderActiveException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ALREADY_CLIENT_ORDER_ACTIVE.getMessage()));
     }
 }
