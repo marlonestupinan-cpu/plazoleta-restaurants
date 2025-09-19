@@ -15,4 +15,6 @@ public interface IOrderHandler {
     void finishOrder(Long idOrder, Long idEmployee);
 
     void deliverOrder(Long idOrder, String securityCode, Long idEmployee);
+
+    void cancelOrder(Long idOrder, Long idClient);
 }

@@ -75,4 +75,14 @@ public class OrderRestController {
         orderHandler.deliverOrder(idOrder, securityCode, user.getId());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/cancel")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<Void> cancelOrder(
+            @RequestParam Long idOrder,
+            @AuthenticationPrincipal CustomUserDetails user
+    ){
+        orderHandler.cancelOrder(idOrder, user.getId());
+        return ResponseEntity.ok().build();
+    }
 }
