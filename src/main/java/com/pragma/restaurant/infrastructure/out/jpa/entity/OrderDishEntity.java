@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,4 +29,7 @@ public class OrderDishEntity {
     @ManyToOne
     @JoinColumn(name = "id_plato")
     private DishEntity dish;
+
+    @Column(name = "cantidad")
+    private Integer quantity;
 }
