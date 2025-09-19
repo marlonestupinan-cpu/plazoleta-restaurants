@@ -38,6 +38,8 @@ public class OrderEntity {
     private Long idClient;
     @Column(name = "id_chef")
     private Long idChef;
+    @Column(name = "codigo_seguridad")
+    private String securityCode;
     @OneToMany(
             mappedBy = "order",
             cascade = CascadeType.ALL,

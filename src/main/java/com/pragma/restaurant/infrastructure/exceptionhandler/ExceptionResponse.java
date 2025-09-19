@@ -11,8 +11,8 @@ public enum ExceptionResponse {
     ALREADY_CLIENT_ORDER_ACTIVE("El cliente ya tiene un pedido activo"),
     ORDER_NOT_FOUND("Pedido no encontrado"),
     NOT_RESTAURANT_EMPLOYEE("El usuario no pertenece al restaurante"),
-    ORDER_ALREADY_ASSIGNED("El pedido ya se encuentra asignado");
-
+    ORDER_ALREADY_ASSIGNED("El pedido ya se encuentra asignado"),
+    ORDER_NOT_ACTIVE("La orden no se encuentra activa");
     private final String message;
 
     ExceptionResponse(String message) {

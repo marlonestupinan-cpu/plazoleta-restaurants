@@ -34,4 +34,5 @@ public class Order {
     private Long idClient;
     private Long idChef;
     private List<OrderDish> orderDishes;
+    private String securityCode;
 }

@@ -11,4 +11,6 @@ public interface IOrderHandler {
     Page<OrderResponseDto> getAllOrders(Long idOwner, Pageable pageable, Integer state);
 
     void assignOrder(Long idOrder, Long idEmployee, Long idOwner);
+
+    void finishOrder(Long idOrder, Long idEmployee);
 }
