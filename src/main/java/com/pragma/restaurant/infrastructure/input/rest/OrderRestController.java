@@ -64,4 +64,15 @@ public class OrderRestController {
         orderHandler.finishOrder(idOrder, user.getId());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/deliver")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<Void> deliverOrder(
+            @RequestParam Long idOrder,
+            @RequestParam String securityCode,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        orderHandler.deliverOrder(idOrder, securityCode, user.getId());
+        return ResponseEntity.ok().build();
+    }
 }

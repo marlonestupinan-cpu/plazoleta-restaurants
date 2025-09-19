@@ -7,6 +7,7 @@ import com.pragma.restaurant.domain.exception.UserNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
 import com.pragma.restaurant.infrastructure.exception.CategoryNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.DishNoFoundException;
+import com.pragma.restaurant.infrastructure.exception.InvalidSecurityCodeException;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
 import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
 import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
@@ -126,5 +127,12 @@ public class ControllerAdvisor {
             OrderNotActiveException orderNotActiveException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_ACTIVE.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidSecurityCodeException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidSecurityCodeException(
+            InvalidSecurityCodeException invalidSecurityCodeException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INVALID_SECURITY_CODE.getMessage()));
     }
 }
