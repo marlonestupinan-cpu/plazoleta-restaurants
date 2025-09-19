@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class OrderUseCase implements IOrderServicePort {
     private final IOrderPersistencePort orderPersistencePort;
-    private final IOrderDishServicePort orderDishServicePort;
     @Override
     public void saveOrder(Order order) {
         orderPersistencePort.saveOrder(order);
@@ -25,5 +24,10 @@ public class OrderUseCase implements IOrderServicePort {
     @Override
     public Page<Order> getAllRestaurantOrders(Long idRestaurant, Pageable pageable, Integer state) {
         return orderPersistencePort.getAllRestaurantOrders(idRestaurant, pageable, state);
+    }
+
+    @Override
+    public Order getOrderById(Long idOrder) {
+        return orderPersistencePort.getOrderById(idOrder);
     }
 }

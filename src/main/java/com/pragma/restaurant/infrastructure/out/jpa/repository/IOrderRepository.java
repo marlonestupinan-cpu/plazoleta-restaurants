@@ -14,4 +14,6 @@ public interface IOrderRepository extends JpaRepository<OrderEntity, Long> {
 
     Page<OrderEntity> findAllByRestaurantId(Long restaurantId, Pageable pageable);
     Page<OrderEntity> findAllByRestaurantIdAndState(Long restaurantId, Order.OrderState state, Pageable pageable);
+
+    Long id(Long id);
 }

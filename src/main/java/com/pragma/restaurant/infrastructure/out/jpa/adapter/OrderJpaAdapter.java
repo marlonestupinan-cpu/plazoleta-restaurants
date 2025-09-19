@@ -2,6 +2,7 @@ package com.pragma.restaurant.infrastructure.out.jpa.adapter;
 
 import com.pragma.restaurant.domain.model.Order;
 import com.pragma.restaurant.domain.spi.IOrderPersistencePort;
+import com.pragma.restaurant.infrastructure.exception.OrderNotFoundException;
 import com.pragma.restaurant.infrastructure.out.jpa.entity.OrderEntity;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.CycleAvoidingMappingContext;
 import com.pragma.restaurant.infrastructure.out.jpa.mapper.IOrderEntityMapper;
@@ -31,15 +32,23 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
 
     @Override
     public Page<Order> getAllRestaurantOrders(Long idRestaurant, Pageable paginator, Integer state) {
-        Order.OrderState orderState = Order.OrderState.getState(state);
         Page<OrderEntity> orders;
         if (state == null) {
             orders = orderRepository.findAllByRestaurantId(idRestaurant, paginator);
         }
         else {
+            Order.OrderState orderState = Order.OrderState.getState(state);
             orders = orderRepository.findAllByRestaurantIdAndState(idRestaurant, orderState, paginator);
         }
 
         return orderEntityMapper.toPageOrderList(orders, new CycleAvoidingMappingContext());
+    }
+
+    @Override
+    public Order getOrderById(Long idOrder) {
+        return orderRepository
+                .findById(idOrder)
+                .map((OrderEntity orderEntity) -> orderEntityMapper.toOrder(orderEntity, new CycleAvoidingMappingContext()))
+                .orElseThrow(OrderNotFoundException::new);
     }
 }
