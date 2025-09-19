@@ -13,4 +13,6 @@ public interface IOrderHandler {
     void assignOrder(Long idOrder, Long idEmployee, Long idOwner);
 
     void finishOrder(Long idOrder, Long idEmployee);
+
+    void deliverOrder(Long idOrder, String securityCode, Long idEmployee);
 }

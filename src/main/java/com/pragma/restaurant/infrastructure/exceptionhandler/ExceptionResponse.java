@@ -12,7 +12,8 @@ public enum ExceptionResponse {
     ORDER_NOT_FOUND("Pedido no encontrado"),
     NOT_RESTAURANT_EMPLOYEE("El usuario no pertenece al restaurante"),
     ORDER_ALREADY_ASSIGNED("El pedido ya se encuentra asignado"),
-    ORDER_NOT_ACTIVE("La orden no se encuentra activa");
+    ORDER_NOT_ACTIVE("La orden no se encuentra activa"),
+    INVALID_SECURITY_CODE("Código de seguridad invalido");
     private final String message;
 
     ExceptionResponse(String message) {

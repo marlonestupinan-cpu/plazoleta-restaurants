@@ -15,6 +15,7 @@ import com.pragma.restaurant.domain.model.Order;
 import com.pragma.restaurant.domain.model.OrderDish;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
+import com.pragma.restaurant.infrastructure.exception.InvalidSecurityCodeException;
 import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
 import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
 import com.pragma.restaurant.infrastructure.exception.OrderNotActiveException;
@@ -115,6 +116,26 @@ public class OrderHandler implements IOrderHandler {
 
         // Send to client the security code
         messageService.sendCode(user.getPhoneNumber(), code);
+    }
+
+    @Override
+    public void deliverOrder(Long idOrder, String securityCode, Long idEmployee) {
+        Order order = orderService.getOrderById(idOrder);
+
+        if (!order.getIdChef().equals(idEmployee)) {
+            throw new NotRestaurantEmployeeException();
+        }
+        if (order.getState() != Order.OrderState.FINISHED) {
+            throw new OrderNotActiveException();
+        }
+        if (!order.getSecurityCode().equals(securityCode)) {
+            throw new InvalidSecurityCodeException();
+        }
+
+        order.setState(Order.OrderState.DELIVERED);
+        order.setSecurityCode(null);
+
+        orderService.saveOrder(order);
     }
 
     public String generateSecurityCode() {
