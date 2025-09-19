@@ -10,6 +10,7 @@ import com.pragma.restaurant.infrastructure.exception.DishNoFoundException;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
 import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
 import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
+import com.pragma.restaurant.infrastructure.exception.OrderNotActiveException;
 import com.pragma.restaurant.infrastructure.exception.OrderNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.RestaurantNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -118,5 +119,12 @@ public class ControllerAdvisor {
             OrderAlreadyAssignedException handOrderAlreadyAssignedException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_ALREADY_ASSIGNED.getMessage()));
+    }
+
+    @ExceptionHandler(OrderNotActiveException.class)
+    public ResponseEntity<Map<String, String>> handleOrderNotActiveException(
+            OrderNotActiveException orderNotActiveException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_ACTIVE.getMessage()));
     }
 }

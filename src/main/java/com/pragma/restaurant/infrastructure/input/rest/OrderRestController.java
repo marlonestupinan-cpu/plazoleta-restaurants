@@ -23,14 +23,14 @@ import javax.validation.Valid;
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderRestController {
-    private final IOrderHandler  orderHandler;
+    private final IOrderHandler orderHandler;
 
     @PostMapping()
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<Void> activateDish(
             @RequestBody @Valid CreateOrderRequestDto createOrderRequestDto,
             @AuthenticationPrincipal CustomUserDetails user) {
-            orderHandler.saveNewOrder(createOrderRequestDto, user.getId());
+        orderHandler.saveNewOrder(createOrderRequestDto, user.getId());
         return ResponseEntity.ok().build();
     }
 
@@ -44,6 +44,7 @@ public class OrderRestController {
                 orderHandler.getAllOrders(user.getIdOwner(), pageable, state)
         );
     }
+
     @PostMapping("/assign")
     @PreAuthorize("hasRole('EMPLEADO')")
     public ResponseEntity<Void> assignOrder(
@@ -51,6 +52,16 @@ public class OrderRestController {
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         orderHandler.assignOrder(idOrder, user.getId(), user.getIdOwner());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/finish")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<Void> putOrderOnFinish(
+            @RequestParam Long idOrder,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        orderHandler.finishOrder(idOrder, user.getId());
         return ResponseEntity.ok().build();
     }
 }

@@ -15,9 +15,9 @@ import org.springframework.data.domain.Pageable;
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
     private final IRestaurantEntityMapper restaurantEntityMapper;
-
     @Override
     public void saveRestaurant(Restaurant restaurant) {
+
         restaurantRepository.save(restaurantEntityMapper.toEntity(restaurant));
     }
 

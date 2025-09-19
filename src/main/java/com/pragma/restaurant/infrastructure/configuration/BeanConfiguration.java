@@ -7,7 +7,6 @@ import com.pragma.restaurant.domain.api.IDishServicePort;
 import com.pragma.restaurant.domain.api.IOrderDishServicePort;
 import com.pragma.restaurant.domain.api.IOrderServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
-import com.pragma.restaurant.domain.api.IUserServicePort;
 import com.pragma.restaurant.domain.spi.ICategoryPersistencePort;
 import com.pragma.restaurant.domain.spi.IDishPersistencePort;
 import com.pragma.restaurant.domain.spi.IOrderDishPersistencePort;
@@ -18,7 +17,6 @@ import com.pragma.restaurant.domain.usecase.DishUseCase;
 import com.pragma.restaurant.domain.usecase.OrderDishUseCase;
 import com.pragma.restaurant.domain.usecase.OrderUseCase;
 import com.pragma.restaurant.domain.usecase.RestaurantUseCase;
-import com.pragma.restaurant.domain.usecase.UserUseCase;
 import com.pragma.restaurant.infrastructure.out.jpa.adapter.CategoryJpaAdapter;
 import com.pragma.restaurant.infrastructure.out.jpa.adapter.DishJpaAdapter;
 import com.pragma.restaurant.infrastructure.out.jpa.adapter.OrderDishJpaAdapter;
@@ -81,10 +79,6 @@ public class BeanConfiguration {
     public IOrderPersistencePort orderPersistencePort() {
         return new OrderJpaAdapter(orderRepository, orderEntityMapper);
     }
-    @Bean
-    public IUserServicePort userServicePort() {
-        return new UserUseCase(webClientBuilder.build());
-    }
 
     @Bean
     public ICategoryServicePort categoryServicePort() {
@@ -98,7 +92,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantServicePort restaurantServicePort() {
-        return new RestaurantUseCase(restaurantPersistencePort(), userServicePort());
+        return new RestaurantUseCase(restaurantPersistencePort());
     }
 
     @Bean
