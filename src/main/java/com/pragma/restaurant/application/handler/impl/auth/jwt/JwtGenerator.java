@@ -49,6 +49,18 @@ public class JwtGenerator implements ITokenGenerator {
     }
 
     @Override
+    public Long extractOwnerId(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        if (claims.get("idOwner") == null)
+            return null;
+        return Long.parseLong(claims.get("idOwner").toString());
+    }
+
+    @Override
     public Date extractExpiration(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSignInKey())

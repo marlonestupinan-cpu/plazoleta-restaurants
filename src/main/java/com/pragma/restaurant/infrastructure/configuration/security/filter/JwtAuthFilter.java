@@ -36,6 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         final String authToken = authHeader.substring(7);
         final Long id = jwtGenerator.extractId(authToken);
+        final Long ownerId = jwtGenerator.extractOwnerId(authToken);
         final String email = jwtGenerator.extractUsername(authToken);
         final String role = jwtGenerator.extractRole(authToken);
         if (email == null || SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -45,6 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         UserDetails userDetails = new CustomUserDetails(
                 id,
+                ownerId,
                 email,
                 "",
                 List.of(new SimpleGrantedAuthority("ROLE_" + role))
