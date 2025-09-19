@@ -108,7 +108,7 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort() {
-        return new OrderUseCase(orderPersistencePort(), orderDishServicePort());
+        return new OrderUseCase(orderPersistencePort());
     }
 
     @Bean
