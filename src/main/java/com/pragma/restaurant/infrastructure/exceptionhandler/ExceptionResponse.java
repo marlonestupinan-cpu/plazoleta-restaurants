@@ -13,7 +13,10 @@ public enum ExceptionResponse {
     NOT_RESTAURANT_EMPLOYEE("El usuario no pertenece al restaurante"),
     ORDER_ALREADY_ASSIGNED("El pedido ya se encuentra asignado"),
     ORDER_NOT_ACTIVE("La orden no se encuentra activa"),
-    INVALID_SECURITY_CODE("Código de seguridad invalido");
+    INVALID_SECURITY_CODE("Código de seguridad invalido"),
+    NOT_ORDER_CLIENT("La orden no le pertenece al cliente"),
+    CANNOT_CANCEL_ORDER("Lo sentimos, tu pedido ya está en preparación y no puede cancelarse")
+    ;
     private final String message;
 
     ExceptionResponse(String message) {

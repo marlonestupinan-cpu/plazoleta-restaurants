@@ -5,10 +5,12 @@ import com.pragma.restaurant.domain.exception.NotOwnerException;
 import com.pragma.restaurant.domain.exception.NotRestaurantOwnerException;
 import com.pragma.restaurant.domain.exception.UserNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
+import com.pragma.restaurant.infrastructure.exception.CannotCancelOrderException;
 import com.pragma.restaurant.infrastructure.exception.CategoryNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.DishNoFoundException;
 import com.pragma.restaurant.infrastructure.exception.InvalidSecurityCodeException;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
+import com.pragma.restaurant.infrastructure.exception.NotOrderClientException;
 import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
 import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
 import com.pragma.restaurant.infrastructure.exception.OrderNotActiveException;
@@ -134,5 +136,19 @@ public class ControllerAdvisor {
             InvalidSecurityCodeException invalidSecurityCodeException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INVALID_SECURITY_CODE.getMessage()));
+    }
+
+    @ExceptionHandler(NotOrderClientException.class)
+    public ResponseEntity<Map<String, String>> handleNotOrderClientException(
+            NotOrderClientException notOrderClientException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_ORDER_CLIENT.getMessage()));
+    }
+
+    @ExceptionHandler(CannotCancelOrderException.class)
+    public ResponseEntity<Map<String, String>> handleCannotCancelOrderException(
+            CannotCancelOrderException notOrderClientException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CANNOT_CANCEL_ORDER.getMessage()));
     }
 }

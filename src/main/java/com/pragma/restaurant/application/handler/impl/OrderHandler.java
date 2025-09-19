@@ -15,7 +15,9 @@ import com.pragma.restaurant.domain.model.Order;
 import com.pragma.restaurant.domain.model.OrderDish;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
+import com.pragma.restaurant.infrastructure.exception.CannotCancelOrderException;
 import com.pragma.restaurant.infrastructure.exception.InvalidSecurityCodeException;
+import com.pragma.restaurant.infrastructure.exception.NotOrderClientException;
 import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
 import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
 import com.pragma.restaurant.infrastructure.exception.OrderNotActiveException;
@@ -134,6 +136,22 @@ public class OrderHandler implements IOrderHandler {
 
         order.setState(Order.OrderState.DELIVERED);
         order.setSecurityCode(null);
+
+        orderService.saveOrder(order);
+    }
+
+    @Override
+    public void cancelOrder(Long idOrder, Long idClient) {
+        Order order = orderService.getOrderById(idOrder);
+
+        if (!order.getIdClient().equals(idClient)) {
+            throw new NotOrderClientException();
+        }
+        if (order.getState() != Order.OrderState.PENDING) {
+            throw new CannotCancelOrderException();
+        }
+
+        order.setState(Order.OrderState.CANCELED);
 
         orderService.saveOrder(order);
     }
