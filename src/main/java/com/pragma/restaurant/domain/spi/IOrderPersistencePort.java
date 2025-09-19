@@ -10,4 +10,6 @@ public interface IOrderPersistencePort {
     Order getClientActiveOrder(Long idClient);
 
     Page<Order> getAllRestaurantOrders(Long idRestaurant, Pageable pageable, Integer state);
+
+    Order getOrderById(Long idOrder);
 }

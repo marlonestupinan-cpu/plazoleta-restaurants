@@ -8,6 +8,9 @@ import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveEx
 import com.pragma.restaurant.infrastructure.exception.CategoryNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.DishNoFoundException;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
+import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
+import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
+import com.pragma.restaurant.infrastructure.exception.OrderNotFoundException;
 import com.pragma.restaurant.infrastructure.exception.RestaurantNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,5 +97,26 @@ public class ControllerAdvisor {
             AlreadyClientOrderActiveException alreadyClientOrderActiveException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ALREADY_CLIENT_ORDER_ACTIVE.getMessage()));
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleOrderNotFoundException(
+            OrderNotFoundException orderNotFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(NotRestaurantEmployeeException.class)
+    public ResponseEntity<Map<String, String>> handleNotRestaurantEmployeeException(
+            NotRestaurantEmployeeException notRestaurantEmployeeException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NOT_RESTAURANT_EMPLOYEE.getMessage()));
+    }
+
+    @ExceptionHandler(OrderAlreadyAssignedException.class)
+    public ResponseEntity<Map<String, String>> handleOrderAlreadyAssignedException(
+            OrderAlreadyAssignedException handOrderAlreadyAssignedException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_ALREADY_ASSIGNED.getMessage()));
     }
 }

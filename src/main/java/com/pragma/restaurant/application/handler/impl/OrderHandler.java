@@ -12,6 +12,8 @@ import com.pragma.restaurant.domain.model.Order;
 import com.pragma.restaurant.domain.model.OrderDish;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
+import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
+import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,5 +66,22 @@ public class OrderHandler implements IOrderHandler {
         Restaurant restaurant = restaurantService.getOwnerRestaurant(idOwner);
 
         return orderResponseMapper.toPageResponseList(orderService.getAllRestaurantOrders(restaurant.getId(), pageable, state));
+    }
+
+    @Override
+    public void assignOrder(Long idOrder, Long idEmployee, Long idOwner) {
+        Order order = orderService.getOrderById(idOrder);
+
+        if (!order.getRestaurant().getIdOwner().equals(idOwner)) {
+            throw new NotRestaurantEmployeeException();
+        }
+        if (order.getState() != Order.OrderState.PENDING) {
+            throw new OrderAlreadyAssignedException();
+        }
+
+        order.setState(Order.OrderState.WORKING);
+        order.setIdChef(idEmployee);
+
+        orderService.saveOrder(order);
     }
 }

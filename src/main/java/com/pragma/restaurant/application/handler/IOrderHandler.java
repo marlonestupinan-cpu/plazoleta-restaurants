@@ -9,4 +9,6 @@ public interface IOrderHandler {
     void saveNewOrder(CreateOrderRequestDto order, Long idClient);
 
     Page<OrderResponseDto> getAllOrders(Long idOwner, Pageable pageable, Integer state);
+
+    void assignOrder(Long idOrder, Long idEmployee, Long idOwner);
 }

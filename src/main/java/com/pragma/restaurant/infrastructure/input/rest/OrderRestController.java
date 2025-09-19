@@ -44,4 +44,13 @@ public class OrderRestController {
                 orderHandler.getAllOrders(user.getIdOwner(), pageable, state)
         );
     }
+    @PostMapping("/assign")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<Void> assignOrder(
+            @RequestParam Long idOrder,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        orderHandler.assignOrder(idOrder, user.getId(), user.getIdOwner());
+        return ResponseEntity.ok().build();
+    }
 }
