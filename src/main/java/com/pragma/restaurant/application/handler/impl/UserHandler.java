@@ -1,18 +1,16 @@
 package com.pragma.restaurant.application.handler.impl;
 
-import com.pragma.restaurant.application.dto.response.UserResponse;
-import com.pragma.restaurant.application.handler.IUserHandler;
+import com.pragma.restaurant.domain.api.IUserServicePort;
 import com.pragma.restaurant.domain.exception.UserNotFoundException;
+import com.pragma.restaurant.domain.model.User;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-@Service
-public class UserHandler implements IUserHandler {
+public class UserHandler implements IUserServicePort {
     private final WebClient.Builder webClient;
 
     public UserHandler(@Qualifier("userWebClient") WebClient.Builder webClient) {
@@ -41,7 +39,7 @@ public class UserHandler implements IUserHandler {
     }
 
     @Override
-    public UserResponse getUserInfo(Long id) {
+    public User getUserInfo(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String token = (String) authentication.getDetails();
 
@@ -51,7 +49,7 @@ public class UserHandler implements IUserHandler {
                 .uri("/{id}", id)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
-                .bodyToMono(UserResponse.class)
+                .bodyToMono(User.class)
                 .onErrorMap(WebClientResponseException.class, e -> {
                     if (e.getStatusCode().value() == 404) {
                         return new UserNotFoundException();

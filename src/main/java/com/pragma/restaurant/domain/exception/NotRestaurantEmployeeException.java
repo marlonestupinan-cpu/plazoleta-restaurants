@@ -1,4 +1,4 @@
-package com.pragma.restaurant.infrastructure.exception;
+package com.pragma.restaurant.domain.exception;
 
 public class NotRestaurantEmployeeException extends RuntimeException {
     public NotRestaurantEmployeeException() {
