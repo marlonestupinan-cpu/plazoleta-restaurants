@@ -17,4 +17,9 @@ public class WebClientConfig {
     public WebClient.Builder messageClientBuilder() {
         return WebClient.builder().baseUrl("http://localhost:8083/message");
     }
+    @Bean
+    @Qualifier("logClient")
+    public WebClient.Builder logClientBuilder() {
+        return WebClient.builder().baseUrl("http://localhost:8084/log");
+    }
 }

@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IOrderServicePort {
-    void saveOrder(Order order);
+    Order saveOrder(Order order);
 
     Order getClientActiveOrder(Long idClient);
 

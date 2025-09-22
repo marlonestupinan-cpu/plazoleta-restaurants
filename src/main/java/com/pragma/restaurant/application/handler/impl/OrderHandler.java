@@ -1,8 +1,10 @@
 package com.pragma.restaurant.application.handler.impl;
 
 import com.pragma.restaurant.application.dto.request.CreateOrderRequestDto;
+import com.pragma.restaurant.application.dto.request.LogRequest;
 import com.pragma.restaurant.application.dto.response.OrderResponseDto;
 import com.pragma.restaurant.application.dto.response.UserResponse;
+import com.pragma.restaurant.application.handler.ILogService;
 import com.pragma.restaurant.application.handler.IMessageService;
 import com.pragma.restaurant.application.handler.IOrderHandler;
 import com.pragma.restaurant.application.handler.IUserHandler;
@@ -43,6 +45,7 @@ public class OrderHandler implements IOrderHandler {
 
     private final IUserHandler userHandler;
     private final IMessageService messageService;
+    private final ILogService logService;
 
     @Override
     public void saveNewOrder(CreateOrderRequestDto order, Long idClient) {
@@ -69,7 +72,9 @@ public class OrderHandler implements IOrderHandler {
         }).collect(Collectors.toList());
 
         orderToSave.setOrderDishes(orderDishes);
-        orderService.saveOrder(orderToSave);
+        Order orderSaved = orderService.saveOrder(orderToSave);
+
+        logService.createLog(LogRequest.buildLogWithOrder(orderSaved));
     }
 
     @Override
@@ -94,6 +99,7 @@ public class OrderHandler implements IOrderHandler {
         order.setIdChef(idEmployee);
 
         orderService.saveOrder(order);
+        logService.createLog(LogRequest.buildLogWithOrder(order));
     }
 
     @Override
@@ -118,6 +124,7 @@ public class OrderHandler implements IOrderHandler {
 
         // Send to client the security code
         messageService.sendCode(user.getPhoneNumber(), code);
+        logService.createLog(LogRequest.buildLogWithOrder(order));
     }
 
     @Override
@@ -138,6 +145,7 @@ public class OrderHandler implements IOrderHandler {
         order.setSecurityCode(null);
 
         orderService.saveOrder(order);
+        logService.createLog(LogRequest.buildLogWithOrder(order));
     }
 
     @Override
@@ -154,6 +162,7 @@ public class OrderHandler implements IOrderHandler {
         order.setState(Order.OrderState.CANCELED);
 
         orderService.saveOrder(order);
+        logService.createLog(LogRequest.buildLogWithOrder(order));
     }
 
     public String generateSecurityCode() {
