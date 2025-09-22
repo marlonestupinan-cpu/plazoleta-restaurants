@@ -18,8 +18,11 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
     @Override
-    public void saveOrder(Order order) {
-        orderRepository.save(orderEntityMapper.toEntity(order, new CycleAvoidingMappingContext()));
+    public Order saveOrder(Order order) {
+        return orderEntityMapper.toOrder(
+                orderRepository
+                        .save(orderEntityMapper.toEntity(order, new CycleAvoidingMappingContext())),
+                new CycleAvoidingMappingContext());
     }
 
     @Override

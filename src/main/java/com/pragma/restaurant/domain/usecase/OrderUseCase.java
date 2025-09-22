@@ -1,6 +1,5 @@
 package com.pragma.restaurant.domain.usecase;
 
-import com.pragma.restaurant.domain.api.IOrderDishServicePort;
 import com.pragma.restaurant.domain.api.IOrderServicePort;
 import com.pragma.restaurant.domain.model.Order;
 import com.pragma.restaurant.domain.spi.IOrderPersistencePort;
@@ -12,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 public class OrderUseCase implements IOrderServicePort {
     private final IOrderPersistencePort orderPersistencePort;
     @Override
-    public void saveOrder(Order order) {
-        orderPersistencePort.saveOrder(order);
+    public Order saveOrder(Order order) {
+        return orderPersistencePort.saveOrder(order);
     }
 
     @Override
