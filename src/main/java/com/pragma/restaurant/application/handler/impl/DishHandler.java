@@ -6,6 +6,7 @@ import com.pragma.restaurant.application.dto.response.ClientDishResponseDto;
 import com.pragma.restaurant.application.handler.IDishHandler;
 import com.pragma.restaurant.application.mapper.IClientDishResponseMapper;
 import com.pragma.restaurant.application.mapper.ICreateDishRequestMapper;
+import com.pragma.restaurant.application.mapper.IPageEntityMapper;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
 import com.pragma.restaurant.domain.api.IDishServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
@@ -28,6 +29,7 @@ public class DishHandler implements IDishHandler {
     private final IDishServicePort dishServicePort;
     private final IRestaurantServicePort restaurantServicePort;
     private final ICategoryServicePort categoryServicePort;
+    private final IPageEntityMapper pageEntityMapper;
 
     @Override
     public void saveDish(CreateDishRequestDto createDishRequestDto, Long ownerId) {
@@ -51,6 +53,6 @@ public class DishHandler implements IDishHandler {
 
     @Override
     public Page<ClientDishResponseDto> getAllDishesFromRestaurant(Long restaurantId, Pageable pageable, Long categoryId) {
-        return clientDishResponseMapper.toPageResponseList(dishServicePort.getAllDishesFromRestaurant(restaurantId, pageable, categoryId));
+        return clientDishResponseMapper.toPageResponseList(dishServicePort.getAllDishesFromRestaurant(restaurantId, pageEntityMapper.toPageConfig(pageable), categoryId));
     }
 }

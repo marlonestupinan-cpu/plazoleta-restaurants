@@ -3,11 +3,11 @@ package com.pragma.restaurant.domain.usecase;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
 import com.pragma.restaurant.domain.api.IUserServicePort;
 import com.pragma.restaurant.domain.exception.NotOwnerException;
+import com.pragma.restaurant.domain.model.PageConfig;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.domain.spi.IRestaurantPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class RestaurantUseCase implements IRestaurantServicePort {
@@ -22,7 +22,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+    public Page<Restaurant> getAllRestaurants(PageConfig pageable) {
         return restaurantPersistencePort.getAllRestaurants(pageable);
     }
 

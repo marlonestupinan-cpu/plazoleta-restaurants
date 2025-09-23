@@ -1,20 +1,20 @@
 package com.pragma.restaurant.domain.usecase;
 
 import com.pragma.restaurant.domain.api.IOrderServicePort;
-import com.pragma.restaurant.domain.model.Order;
-import com.pragma.restaurant.domain.model.OrderDish;
-import com.pragma.restaurant.domain.model.User;
-import com.pragma.restaurant.domain.spi.IOrderPersistencePort;
 import com.pragma.restaurant.domain.exception.AlreadyClientOrderActiveException;
-import com.pragma.restaurant.domain.exception.NotRestaurantEmployeeException;
-import com.pragma.restaurant.domain.exception.OrderAlreadyAssignedException;
-import com.pragma.restaurant.domain.exception.OrderNotActiveException;
 import com.pragma.restaurant.domain.exception.CannotCancelOrderException;
 import com.pragma.restaurant.domain.exception.InvalidSecurityCodeException;
 import com.pragma.restaurant.domain.exception.NotOrderClientException;
+import com.pragma.restaurant.domain.exception.NotRestaurantEmployeeException;
+import com.pragma.restaurant.domain.exception.OrderAlreadyAssignedException;
+import com.pragma.restaurant.domain.exception.OrderNotActiveException;
+import com.pragma.restaurant.domain.model.Order;
+import com.pragma.restaurant.domain.model.OrderDish;
+import com.pragma.restaurant.domain.model.PageConfig;
+import com.pragma.restaurant.domain.model.User;
+import com.pragma.restaurant.domain.spi.IOrderPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class OrderUseCase implements IOrderServicePort {
     }
 
     @Override
-    public Page<Order> getAllRestaurantOrders(Long idRestaurant, Pageable pageable, Integer state) {
+    public Page<Order> getAllRestaurantOrders(Long idRestaurant, PageConfig pageable, Integer state) {
         return orderPersistencePort.getAllRestaurantOrders(idRestaurant, pageable, state);
     }
 

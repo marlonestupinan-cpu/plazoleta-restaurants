@@ -5,6 +5,7 @@ import com.pragma.restaurant.application.handler.impl.UserHandler;
 import com.pragma.restaurant.application.handler.impl.auth.jwt.JwtGenerator;
 import com.pragma.restaurant.application.mapper.ICreateOrderRequestMapper;
 import com.pragma.restaurant.application.mapper.IOrderDishRequestMapper;
+import com.pragma.restaurant.application.mapper.IPageEntityMapper;
 import com.pragma.restaurant.application.mapper.impl.CreateOrderRequestMapper;
 import com.pragma.restaurant.application.mapper.impl.OrderDishRequestMapper;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
@@ -58,6 +59,7 @@ public class BeanConfiguration {
     private final IOrderDishRepository orderDishRepository;
     private final IOrderEntityMapper orderEntityMapper;
     private final IOrderDishEntityMapper orderDishEntityMapper;
+    private final IPageEntityMapper pageEntityMapper;
 
     private final WebClient.Builder webClientUser;
 
@@ -70,7 +72,7 @@ public class BeanConfiguration {
                              IOrderRepository orderRepository,
                              IOrderDishRepository orderDishRepository,
                              IOrderEntityMapper orderEntityMapper,
-                             IOrderDishEntityMapper orderDishEntityMapper,
+                             IOrderDishEntityMapper orderDishEntityMapper, IPageEntityMapper pageEntityMapper,
                              @Qualifier("userWebClient") WebClient.Builder webClientUser) {
         this.restaurantRepository = restaurantRepository;
         this.restaurantEntityMapper = restaurantEntityMapper;
@@ -82,12 +84,13 @@ public class BeanConfiguration {
         this.orderDishRepository = orderDishRepository;
         this.orderEntityMapper = orderEntityMapper;
         this.orderDishEntityMapper = orderDishEntityMapper;
+        this.pageEntityMapper = pageEntityMapper;
         this.webClientUser = webClientUser;
     }
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
-        return new RestaurantJpaAdapter(restaurantRepository, restaurantEntityMapper);
+        return new RestaurantJpaAdapter(restaurantRepository, restaurantEntityMapper, pageEntityMapper);
     }
 
     @Bean
@@ -97,7 +100,7 @@ public class BeanConfiguration {
 
     @Bean
     public IDishPersistencePort dishPersistencePort() {
-        return new DishJpaAdapter(dishRepository, dishEntityMapper);
+        return new DishJpaAdapter(dishRepository, dishEntityMapper, pageEntityMapper);
     }
 
     @Bean
@@ -106,7 +109,7 @@ public class BeanConfiguration {
     }
     @Bean
     public IOrderPersistencePort orderPersistencePort() {
-        return new OrderJpaAdapter(orderRepository, orderEntityMapper);
+        return new OrderJpaAdapter(orderRepository, orderEntityMapper, pageEntityMapper);
     }
 
     @Bean

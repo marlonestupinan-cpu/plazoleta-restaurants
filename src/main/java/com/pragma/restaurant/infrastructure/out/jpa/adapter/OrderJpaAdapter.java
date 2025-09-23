@@ -1,6 +1,8 @@
 package com.pragma.restaurant.infrastructure.out.jpa.adapter;
 
+import com.pragma.restaurant.application.mapper.IPageEntityMapper;
 import com.pragma.restaurant.domain.model.Order;
+import com.pragma.restaurant.domain.model.PageConfig;
 import com.pragma.restaurant.domain.spi.IOrderPersistencePort;
 import com.pragma.restaurant.infrastructure.exception.OrderNotFoundException;
 import com.pragma.restaurant.infrastructure.out.jpa.entity.OrderEntity;
@@ -9,7 +11,6 @@ import com.pragma.restaurant.infrastructure.out.jpa.mapper.IOrderEntityMapper;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -17,6 +18,8 @@ import java.util.List;
 public class OrderJpaAdapter implements IOrderPersistencePort {
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
+    private final IPageEntityMapper pageEntityMapper;
+
     @Override
     public Order saveOrder(Order order) {
         return orderEntityMapper.toOrder(
@@ -34,14 +37,14 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     }
 
     @Override
-    public Page<Order> getAllRestaurantOrders(Long idRestaurant, Pageable paginator, Integer state) {
+    public Page<Order> getAllRestaurantOrders(Long idRestaurant, PageConfig paginator, Integer state) {
         Page<OrderEntity> orders;
         if (state == null) {
-            orders = orderRepository.findAllByRestaurantId(idRestaurant, paginator);
+            orders = orderRepository.findAllByRestaurantId(idRestaurant, pageEntityMapper.toPageable(paginator));
         }
         else {
             Order.OrderState orderState = Order.OrderState.getState(state);
-            orders = orderRepository.findAllByRestaurantIdAndState(idRestaurant, orderState, paginator);
+            orders = orderRepository.findAllByRestaurantIdAndState(idRestaurant, orderState, pageEntityMapper.toPageable(paginator));
         }
 
         return orderEntityMapper.toPageOrderList(orders, new CycleAvoidingMappingContext());
