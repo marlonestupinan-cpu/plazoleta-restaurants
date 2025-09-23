@@ -7,21 +7,25 @@ import lombok.Data;
 @Data
 @Builder
 public class LogRequest {
-    private Order.OrderState state;
+    private Order.OrderState oldState;
+    private Order.OrderState newState;
     private Long idClient;
     private Long idEmployee;
     private Long idOrder;
     private Long idRestaurant;
     private Long datetime;
+    private String employeeEmail;
 
-    public static LogRequest buildLogWithOrder(Order order) {
+    public static LogRequest buildLogWithOrder(Order order, String employeeEmail, Order.OrderState oldState) {
         return LogRequest.builder()
-                .state(order.getState())
+                .oldState(oldState)
+                .newState(order.getState())
                 .idOrder(order.getId())
                 .idRestaurant(order.getRestaurant().getId())
                 .idClient(order.getIdClient())
                 .idEmployee(order.getIdChef())
                 .datetime(System.currentTimeMillis())
+                .employeeEmail(employeeEmail)
                 .build();
     }
 }

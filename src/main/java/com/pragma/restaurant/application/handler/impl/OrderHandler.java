@@ -56,7 +56,7 @@ public class OrderHandler implements IOrderHandler {
 
         Order orderSaved = orderService.saveOrder(orderToSave, orderDishes, idClient);
 
-        logService.createLog(LogRequest.buildLogWithOrder(orderSaved));
+        logService.createLog(LogRequest.buildLogWithOrder(orderSaved, null, null));
     }
 
     @Override
@@ -75,35 +75,40 @@ public class OrderHandler implements IOrderHandler {
     @Override
     public void assignOrder(Long idOrder, Long idEmployee, Long idOwner) {
         Order order = orderService.getOrderById(idOrder);
+        User employee = userService.getUserInfo(idEmployee);
         orderService.assignOrder(order, idEmployee, idOwner);
-        logService.createLog(LogRequest.buildLogWithOrder(order));
+        logService.createLog(LogRequest.buildLogWithOrder(order,employee.getEmail(), Order.OrderState.PENDING));
     }
 
     @Override
     public void finishOrder(Long idOrder, Long idEmployee) {
         Order order = orderService.getOrderById(idOrder);
         User user = userService.getUserInfo(order.getIdClient());
+        User employee = userService.getUserInfo(idEmployee);
+
         String code = generateSecurityCode();
 
         orderService.finishOrder(order, idEmployee, user, code);
 
         // Send to client the security code
         messageService.sendCode(user.getPhoneNumber(), code);
-        logService.createLog(LogRequest.buildLogWithOrder(order));
+        logService.createLog(LogRequest.buildLogWithOrder(order, employee.getEmail(), Order.OrderState.WORKING));
     }
 
     @Override
     public void deliverOrder(Long idOrder, String securityCode, Long idEmployee) {
         Order order = orderService.getOrderById(idOrder);
+        User employee = userService.getUserInfo(idEmployee);
+
         orderService.deliverOrder(order, securityCode, idEmployee);
-        logService.createLog(LogRequest.buildLogWithOrder(order));
+        logService.createLog(LogRequest.buildLogWithOrder(order, employee.getEmail(), Order.OrderState.FINISHED));
     }
 
     @Override
     public void cancelOrder(Long idOrder, Long idClient) {
         Order order = orderService.getOrderById(idOrder);
         orderService.cancelOrder(order, idClient);
-        logService.createLog(LogRequest.buildLogWithOrder(order));
+        logService.createLog(LogRequest.buildLogWithOrder(order, null, Order.OrderState.PENDING));
     }
 
     public String generateSecurityCode() {
