@@ -1,4 +1,4 @@
-package com.pragma.restaurant.infrastructure.exception;
+package com.pragma.restaurant.domain.exception;
 
 public class NotOrderClientException extends RuntimeException {
     public NotOrderClientException() {

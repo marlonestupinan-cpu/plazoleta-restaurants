@@ -3,26 +3,21 @@ package com.pragma.restaurant.application.handler.impl;
 import com.pragma.restaurant.application.dto.request.CreateOrderRequestDto;
 import com.pragma.restaurant.application.dto.request.LogRequest;
 import com.pragma.restaurant.application.dto.response.OrderResponseDto;
-import com.pragma.restaurant.application.dto.response.UserResponse;
 import com.pragma.restaurant.application.handler.ILogService;
 import com.pragma.restaurant.application.handler.IMessageService;
 import com.pragma.restaurant.application.handler.IOrderHandler;
-import com.pragma.restaurant.application.handler.IUserHandler;
+import com.pragma.restaurant.application.mapper.ICreateOrderRequestMapper;
+import com.pragma.restaurant.application.mapper.IOrderDishRequestMapper;
 import com.pragma.restaurant.application.mapper.IOrderResponseMapper;
-import com.pragma.restaurant.domain.api.IDishServicePort;
+import com.pragma.restaurant.application.mapper.IPageEntityMapper;
+import com.pragma.restaurant.application.mapper.IPageListMapper;
 import com.pragma.restaurant.domain.api.IOrderServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
-import com.pragma.restaurant.domain.model.Dish;
+import com.pragma.restaurant.domain.api.IUserServicePort;
 import com.pragma.restaurant.domain.model.Order;
 import com.pragma.restaurant.domain.model.OrderDish;
 import com.pragma.restaurant.domain.model.Restaurant;
-import com.pragma.restaurant.infrastructure.exception.AlreadyClientOrderActiveException;
-import com.pragma.restaurant.infrastructure.exception.CannotCancelOrderException;
-import com.pragma.restaurant.infrastructure.exception.InvalidSecurityCodeException;
-import com.pragma.restaurant.infrastructure.exception.NotOrderClientException;
-import com.pragma.restaurant.infrastructure.exception.NotRestaurantEmployeeException;
-import com.pragma.restaurant.infrastructure.exception.OrderAlreadyAssignedException;
-import com.pragma.restaurant.infrastructure.exception.OrderNotActiveException;
+import com.pragma.restaurant.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,39 +34,27 @@ import java.util.stream.Collectors;
 public class OrderHandler implements IOrderHandler {
     private final IOrderServicePort orderService;
     private final IRestaurantServicePort restaurantService;
-    private final IDishServicePort dishService;
     private final IOrderResponseMapper orderResponseMapper;
 
-    private final IUserHandler userHandler;
+    private final IUserServicePort userService;
     private final IMessageService messageService;
     private final ILogService logService;
 
+    private final ICreateOrderRequestMapper createOrderRequestMapper;
+    private final IOrderDishRequestMapper orderDishRequestMapper;
+    private final IPageEntityMapper pageEntityMapper;
+    private final IPageListMapper pageListMapper;
+
     @Override
     public void saveNewOrder(CreateOrderRequestDto order, Long idClient) {
-        Restaurant restaurant = restaurantService.getRestaurantById(order.getIdRestaurant());
+        Order orderToSave = createOrderRequestMapper.toOrder(order);
+        List<OrderDish> orderDishes = order
+                .getOrderDishes()
+                .stream()
+                .map(orderDishRequestMapper::toOrderDish)
+                .collect(Collectors.toList());
 
-        Order activeOrder = orderService.getClientActiveOrder(idClient);
-        if (activeOrder != null) {
-            throw new AlreadyClientOrderActiveException();
-        }
-        Order orderToSave = Order.builder()
-                .date(new Date())
-                .state(Order.OrderState.PENDING)
-                .idClient(idClient)
-                .restaurant(restaurant)
-                .build();
-
-        List<OrderDish> orderDishes = order.getOrderDishes().stream().map(orderRequest -> {
-            Dish dish = dishService.getById(orderRequest.getIdDish());
-            return OrderDish.builder()
-                    .dish(dish)
-                    .order(orderToSave)
-                    .quantity(orderRequest.getQuantity())
-                    .build();
-        }).collect(Collectors.toList());
-
-        orderToSave.setOrderDishes(orderDishes);
-        Order orderSaved = orderService.saveOrder(orderToSave);
+        Order orderSaved = orderService.saveOrder(orderToSave, orderDishes, idClient);
 
         logService.createLog(LogRequest.buildLogWithOrder(orderSaved));
     }
@@ -81,46 +63,29 @@ public class OrderHandler implements IOrderHandler {
     public Page<OrderResponseDto> getAllOrders(Long idOwner, Pageable pageable, Integer state) {
         Restaurant restaurant = restaurantService.getOwnerRestaurant(idOwner);
 
-        return orderResponseMapper.toPageResponseList(orderService.getAllRestaurantOrders(restaurant.getId(), pageable, state));
+        return orderResponseMapper
+                .toPageResponseList(pageListMapper
+                        .toPage(orderService
+                                        .getAllRestaurantOrders(restaurant.getId(),
+                                                pageEntityMapper.toPageConfig(pageable),
+                                                state),
+                                pageable));
     }
 
     @Override
     public void assignOrder(Long idOrder, Long idEmployee, Long idOwner) {
         Order order = orderService.getOrderById(idOrder);
-
-        if (!order.getRestaurant().getIdOwner().equals(idOwner)) {
-            throw new NotRestaurantEmployeeException();
-        }
-        if (order.getState() != Order.OrderState.PENDING) {
-            throw new OrderAlreadyAssignedException();
-        }
-
-        order.setState(Order.OrderState.WORKING);
-        order.setIdChef(idEmployee);
-
-        orderService.saveOrder(order);
+        orderService.assignOrder(order, idEmployee, idOwner);
         logService.createLog(LogRequest.buildLogWithOrder(order));
     }
 
     @Override
     public void finishOrder(Long idOrder, Long idEmployee) {
         Order order = orderService.getOrderById(idOrder);
-
-        if (!order.getIdChef().equals(idEmployee)) {
-            throw new NotRestaurantEmployeeException();
-        }
-        if (order.getState() != Order.OrderState.WORKING) {
-            throw new OrderNotActiveException();
-        }
-
-        UserResponse user = userHandler.getUserInfo(order.getIdClient());
-
+        User user = userService.getUserInfo(order.getIdClient());
         String code = generateSecurityCode();
 
-        order.setState(Order.OrderState.FINISHED);
-        order.setSecurityCode(code);
-
-        orderService.saveOrder(order);
+        orderService.finishOrder(order, idEmployee, user, code);
 
         // Send to client the security code
         messageService.sendCode(user.getPhoneNumber(), code);
@@ -130,38 +95,14 @@ public class OrderHandler implements IOrderHandler {
     @Override
     public void deliverOrder(Long idOrder, String securityCode, Long idEmployee) {
         Order order = orderService.getOrderById(idOrder);
-
-        if (!order.getIdChef().equals(idEmployee)) {
-            throw new NotRestaurantEmployeeException();
-        }
-        if (order.getState() != Order.OrderState.FINISHED) {
-            throw new OrderNotActiveException();
-        }
-        if (!order.getSecurityCode().equals(securityCode)) {
-            throw new InvalidSecurityCodeException();
-        }
-
-        order.setState(Order.OrderState.DELIVERED);
-        order.setSecurityCode(null);
-
-        orderService.saveOrder(order);
+        orderService.deliverOrder(order, securityCode, idEmployee);
         logService.createLog(LogRequest.buildLogWithOrder(order));
     }
 
     @Override
     public void cancelOrder(Long idOrder, Long idClient) {
         Order order = orderService.getOrderById(idOrder);
-
-        if (!order.getIdClient().equals(idClient)) {
-            throw new NotOrderClientException();
-        }
-        if (order.getState() != Order.OrderState.PENDING) {
-            throw new CannotCancelOrderException();
-        }
-
-        order.setState(Order.OrderState.CANCELED);
-
-        orderService.saveOrder(order);
+        orderService.cancelOrder(order, idClient);
         logService.createLog(LogRequest.buildLogWithOrder(order));
     }
 

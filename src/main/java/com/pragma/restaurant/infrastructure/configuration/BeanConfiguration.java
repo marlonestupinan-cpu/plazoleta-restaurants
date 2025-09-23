@@ -1,12 +1,20 @@
 package com.pragma.restaurant.infrastructure.configuration;
 
 import com.pragma.restaurant.application.handler.ITokenGenerator;
+import com.pragma.restaurant.application.handler.impl.UserHandler;
 import com.pragma.restaurant.application.handler.impl.auth.jwt.JwtGenerator;
+import com.pragma.restaurant.application.mapper.ICreateOrderRequestMapper;
+import com.pragma.restaurant.application.mapper.IOrderDishRequestMapper;
+import com.pragma.restaurant.application.mapper.IPageEntityMapper;
+import com.pragma.restaurant.application.mapper.IPageListMapper;
+import com.pragma.restaurant.application.mapper.impl.CreateOrderRequestMapper;
+import com.pragma.restaurant.application.mapper.impl.OrderDishRequestMapper;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
 import com.pragma.restaurant.domain.api.IDishServicePort;
 import com.pragma.restaurant.domain.api.IOrderDishServicePort;
 import com.pragma.restaurant.domain.api.IOrderServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
+import com.pragma.restaurant.domain.api.IUserServicePort;
 import com.pragma.restaurant.domain.spi.ICategoryPersistencePort;
 import com.pragma.restaurant.domain.spi.IDishPersistencePort;
 import com.pragma.restaurant.domain.spi.IOrderDishPersistencePort;
@@ -32,13 +40,12 @@ import com.pragma.restaurant.infrastructure.out.jpa.repository.IDishRepository;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IOrderDishRepository;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IOrderRepository;
 import com.pragma.restaurant.infrastructure.out.jpa.repository.IRestaurantRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-@RequiredArgsConstructor
 public class BeanConfiguration {
     private final IRestaurantRepository restaurantRepository;
     private final IRestaurantEntityMapper restaurantEntityMapper;
@@ -53,12 +60,40 @@ public class BeanConfiguration {
     private final IOrderDishRepository orderDishRepository;
     private final IOrderEntityMapper orderEntityMapper;
     private final IOrderDishEntityMapper orderDishEntityMapper;
+    private final IPageEntityMapper pageEntityMapper;
+    private final IPageListMapper pageListMapper;
 
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient.Builder webClientUser;
+
+    public BeanConfiguration(IRestaurantRepository restaurantRepository,
+                             IRestaurantEntityMapper restaurantEntityMapper,
+                             ICategoryRepository categoryRepository,
+                             ICategoryEntityMapper categoryEntityMapper,
+                             IDishRepository dishRepository,
+                             IDishEntityMapper dishEntityMapper,
+                             IOrderRepository orderRepository,
+                             IOrderDishRepository orderDishRepository,
+                             IOrderEntityMapper orderEntityMapper,
+                             IOrderDishEntityMapper orderDishEntityMapper, IPageEntityMapper pageEntityMapper, IPageListMapper pageListMapper,
+                             @Qualifier("userWebClient") WebClient.Builder webClientUser) {
+        this.restaurantRepository = restaurantRepository;
+        this.restaurantEntityMapper = restaurantEntityMapper;
+        this.categoryRepository = categoryRepository;
+        this.categoryEntityMapper = categoryEntityMapper;
+        this.dishRepository = dishRepository;
+        this.dishEntityMapper = dishEntityMapper;
+        this.orderRepository = orderRepository;
+        this.orderDishRepository = orderDishRepository;
+        this.orderEntityMapper = orderEntityMapper;
+        this.orderDishEntityMapper = orderDishEntityMapper;
+        this.pageEntityMapper = pageEntityMapper;
+        this.pageListMapper = pageListMapper;
+        this.webClientUser = webClientUser;
+    }
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
-        return new RestaurantJpaAdapter(restaurantRepository, restaurantEntityMapper);
+        return new RestaurantJpaAdapter(restaurantRepository, restaurantEntityMapper, pageEntityMapper, pageListMapper);
     }
 
     @Bean
@@ -68,7 +103,7 @@ public class BeanConfiguration {
 
     @Bean
     public IDishPersistencePort dishPersistencePort() {
-        return new DishJpaAdapter(dishRepository, dishEntityMapper);
+        return new DishJpaAdapter(dishRepository, dishEntityMapper, pageEntityMapper, pageListMapper);
     }
 
     @Bean
@@ -77,7 +112,7 @@ public class BeanConfiguration {
     }
     @Bean
     public IOrderPersistencePort orderPersistencePort() {
-        return new OrderJpaAdapter(orderRepository, orderEntityMapper);
+        return new OrderJpaAdapter(orderRepository, orderEntityMapper, pageEntityMapper, pageListMapper);
     }
 
     @Bean
@@ -92,7 +127,12 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantServicePort restaurantServicePort() {
-        return new RestaurantUseCase(restaurantPersistencePort());
+        return new RestaurantUseCase(restaurantPersistencePort(), userServicePort());
+    }
+
+    @Bean
+    public IUserServicePort userServicePort() {
+        return new UserHandler(webClientUser);
     }
 
     @Bean
@@ -108,5 +148,15 @@ public class BeanConfiguration {
     @Bean
     public ITokenGenerator tokenGenerator() {
         return new JwtGenerator();
+    }
+
+    @Bean
+    public ICreateOrderRequestMapper createOrderRequestMapper() {
+        return new CreateOrderRequestMapper(restaurantServicePort());
+    }
+
+    @Bean
+    public IOrderDishRequestMapper orderDishRequestMapper() {
+        return new OrderDishRequestMapper(dishServicePort());
     }
 }

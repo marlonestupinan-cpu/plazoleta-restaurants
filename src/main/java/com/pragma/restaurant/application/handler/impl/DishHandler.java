@@ -6,6 +6,8 @@ import com.pragma.restaurant.application.dto.response.ClientDishResponseDto;
 import com.pragma.restaurant.application.handler.IDishHandler;
 import com.pragma.restaurant.application.mapper.IClientDishResponseMapper;
 import com.pragma.restaurant.application.mapper.ICreateDishRequestMapper;
+import com.pragma.restaurant.application.mapper.IPageEntityMapper;
+import com.pragma.restaurant.application.mapper.IPageListMapper;
 import com.pragma.restaurant.domain.api.ICategoryServicePort;
 import com.pragma.restaurant.domain.api.IDishServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
@@ -25,44 +27,40 @@ import javax.transaction.Transactional;
 public class DishHandler implements IDishHandler {
     private final ICreateDishRequestMapper createDishRequestMapper;
     private final IClientDishResponseMapper clientDishResponseMapper;
-    private final IDishServicePort  dishServicePort;
-    private final IRestaurantServicePort  restaurantServicePort;
-    private final ICategoryServicePort  categoryServicePort;
+    private final IDishServicePort dishServicePort;
+    private final IRestaurantServicePort restaurantServicePort;
+    private final ICategoryServicePort categoryServicePort;
+    private final IPageEntityMapper pageEntityMapper;
+    private final IPageListMapper pageListMapper;
 
     @Override
     public void saveDish(CreateDishRequestDto createDishRequestDto, Long ownerId) {
         Dish dish = createDishRequestMapper.toDish(createDishRequestDto);
         Restaurant restaurant = restaurantServicePort.getRestaurantById(createDishRequestDto.getIdRestaurant());
         Category category = categoryServicePort.getCategoryById(createDishRequestDto.getIdCategory());
-
-        dish.setRestaurant(restaurant);
-        dish.setCategory(category);
-
-        dishServicePort.saveDish(dish, ownerId);
+        dishServicePort.saveDish(dish, ownerId, restaurant, category);
     }
 
     @Override
     public void updateDish(UpdateDishRequestDto updateDishRequestDto, Long ownerId) {
         Dish dish = dishServicePort.getById(updateDishRequestDto.getId());
-        if (updateDishRequestDto.getPrice() != null) {
-            dish.setPrice(updateDishRequestDto.getPrice());
-        }
-        if (updateDishRequestDto.getDescription() != null) {
-            dish.setDescription(updateDishRequestDto.getDescription());
-        }
-
-        dishServicePort.saveDish(dish, ownerId);
+        dishServicePort.updateDish(dish, updateDishRequestDto.getPrice(), updateDishRequestDto.getDescription(), ownerId);
     }
 
     @Override
     public void setState(Long idDish, Long idOwner, boolean state) {
         Dish dish = dishServicePort.getById(idDish);
-        dish.setActive(state);
-        dishServicePort.saveDish(dish, idOwner);
+        dishServicePort.changeActiveState(dish, idOwner, state);
     }
 
     @Override
     public Page<ClientDishResponseDto> getAllDishesFromRestaurant(Long restaurantId, Pageable pageable, Long categoryId) {
-        return clientDishResponseMapper.toPageResponseList(dishServicePort.getAllDishesFromRestaurant(restaurantId, pageable, categoryId));
+        return clientDishResponseMapper
+                .toPageResponseList(pageListMapper
+                        .toPage(dishServicePort
+                                        .getAllDishesFromRestaurant(restaurantId,
+                                                pageEntityMapper.toPageConfig(pageable),
+                                                categoryId),
+                pageable));
     }
 }
