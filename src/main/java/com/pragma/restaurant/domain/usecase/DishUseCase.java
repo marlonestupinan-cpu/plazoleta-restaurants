@@ -5,10 +5,10 @@ import com.pragma.restaurant.domain.exception.NotRestaurantOwnerException;
 import com.pragma.restaurant.domain.model.Category;
 import com.pragma.restaurant.domain.model.Dish;
 import com.pragma.restaurant.domain.model.PageConfig;
+import com.pragma.restaurant.domain.model.PageList;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.domain.spi.IDishPersistencePort;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 
 @RequiredArgsConstructor
 public class DishUseCase implements IDishServicePort {
@@ -52,7 +52,7 @@ public class DishUseCase implements IDishServicePort {
     }
 
     @Override
-    public Page<Dish> getAllDishesFromRestaurant(Long restaurantId, PageConfig pageable, Long categoryId) {
+    public PageList<Dish> getAllDishesFromRestaurant(Long restaurantId, PageConfig pageable, Long categoryId) {
         return dishPersistencePort.getByRestaurant(restaurantId, pageable, categoryId);
     }
 }

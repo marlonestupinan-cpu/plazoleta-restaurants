@@ -1,8 +1,10 @@
 package com.pragma.restaurant.infrastructure.out.jpa.adapter;
 
 import com.pragma.restaurant.application.mapper.IPageEntityMapper;
+import com.pragma.restaurant.application.mapper.IPageListMapper;
 import com.pragma.restaurant.domain.model.Dish;
 import com.pragma.restaurant.domain.model.PageConfig;
+import com.pragma.restaurant.domain.model.PageList;
 import com.pragma.restaurant.domain.spi.IDishPersistencePort;
 import com.pragma.restaurant.infrastructure.exception.DishNoFoundException;
 import com.pragma.restaurant.infrastructure.out.jpa.entity.DishEntity;
@@ -16,6 +18,7 @@ public class DishJpaAdapter implements IDishPersistencePort {
     private final IDishRepository dishRepository;
     private final IDishEntityMapper dishEntityMapper;
     private final IPageEntityMapper pageEntityMapper;
+    private final IPageListMapper pageListMapper;
 
     @Override
     public void saveDish(Dish dish) {
@@ -30,7 +33,7 @@ public class DishJpaAdapter implements IDishPersistencePort {
     }
 
     @Override
-    public Page<Dish> getByRestaurant(Long restaurantId, PageConfig pageable, Long categoryId) {
+    public PageList<Dish> getByRestaurant(Long restaurantId, PageConfig pageable, Long categoryId) {
         Page<DishEntity> dishes;
         if (categoryId == null) {
             dishes = dishRepository.findByRestaurantIdAndActiveIsTrue(restaurantId, pageEntityMapper.toPageable(pageable));
@@ -38,6 +41,6 @@ public class DishJpaAdapter implements IDishPersistencePort {
             dishes = dishRepository.findByRestaurantIdAndCategoryIdAndActiveIsTrue(restaurantId, categoryId, pageEntityMapper.toPageable(pageable));
         }
 
-        return dishEntityMapper.toPageDishList(dishes);
+        return pageListMapper.toPageList(dishEntityMapper.toPageDishList(dishes));
     }
 }

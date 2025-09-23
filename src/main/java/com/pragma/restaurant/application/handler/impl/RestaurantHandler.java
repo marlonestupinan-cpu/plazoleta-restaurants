@@ -6,6 +6,7 @@ import com.pragma.restaurant.application.handler.IRestaurantHandler;
 import com.pragma.restaurant.application.mapper.IClientRestaurantResponseMapper;
 import com.pragma.restaurant.application.mapper.ICreateRestaurantRequestMapper;
 import com.pragma.restaurant.application.mapper.IPageEntityMapper;
+import com.pragma.restaurant.application.mapper.IPageListMapper;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ public class RestaurantHandler implements IRestaurantHandler {
     private final IClientRestaurantResponseMapper clientRestaurantResponseMapper;
     private final IRestaurantServicePort restaurantService;
     private final IPageEntityMapper pageEntityMapper;
+    private final IPageListMapper pageListMapper;
 
     @Override
     public void saveRestaurant(CreateRestaurantRequestDto requestRestaurant) {
@@ -30,6 +32,12 @@ public class RestaurantHandler implements IRestaurantHandler {
 
     @Override
     public Page<ClientRestaurantResponseDto> getAllRestaurants(Pageable pageable) {
-        return clientRestaurantResponseMapper.toPageResponseList(restaurantService.getAllRestaurants(pageEntityMapper.toPageConfig(pageable)));
+        return clientRestaurantResponseMapper
+                .toPageResponseList(pageListMapper
+                        .toPage(restaurantService
+                                .getAllRestaurants(
+                                        pageEntityMapper.toPageConfig(pageable)
+                                ), pageable)
+                );
     }
 }

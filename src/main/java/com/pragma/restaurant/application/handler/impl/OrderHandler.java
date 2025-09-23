@@ -10,6 +10,7 @@ import com.pragma.restaurant.application.mapper.ICreateOrderRequestMapper;
 import com.pragma.restaurant.application.mapper.IOrderDishRequestMapper;
 import com.pragma.restaurant.application.mapper.IOrderResponseMapper;
 import com.pragma.restaurant.application.mapper.IPageEntityMapper;
+import com.pragma.restaurant.application.mapper.IPageListMapper;
 import com.pragma.restaurant.domain.api.IOrderServicePort;
 import com.pragma.restaurant.domain.api.IRestaurantServicePort;
 import com.pragma.restaurant.domain.api.IUserServicePort;
@@ -42,6 +43,7 @@ public class OrderHandler implements IOrderHandler {
     private final ICreateOrderRequestMapper createOrderRequestMapper;
     private final IOrderDishRequestMapper orderDishRequestMapper;
     private final IPageEntityMapper pageEntityMapper;
+    private final IPageListMapper pageListMapper;
 
     @Override
     public void saveNewOrder(CreateOrderRequestDto order, Long idClient) {
@@ -61,7 +63,13 @@ public class OrderHandler implements IOrderHandler {
     public Page<OrderResponseDto> getAllOrders(Long idOwner, Pageable pageable, Integer state) {
         Restaurant restaurant = restaurantService.getOwnerRestaurant(idOwner);
 
-        return orderResponseMapper.toPageResponseList(orderService.getAllRestaurantOrders(restaurant.getId(), pageEntityMapper.toPageConfig(pageable), state));
+        return orderResponseMapper
+                .toPageResponseList(pageListMapper
+                        .toPage(orderService
+                                        .getAllRestaurantOrders(restaurant.getId(),
+                                                pageEntityMapper.toPageConfig(pageable),
+                                                state),
+                                pageable));
     }
 
     @Override

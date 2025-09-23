@@ -1,7 +1,9 @@
 package com.pragma.restaurant.infrastructure.out.jpa.adapter;
 
 import com.pragma.restaurant.application.mapper.IPageEntityMapper;
+import com.pragma.restaurant.application.mapper.IPageListMapper;
 import com.pragma.restaurant.domain.model.PageConfig;
+import com.pragma.restaurant.domain.model.PageList;
 import com.pragma.restaurant.domain.model.Restaurant;
 import com.pragma.restaurant.domain.spi.IRestaurantPersistencePort;
 import com.pragma.restaurant.infrastructure.exception.NoDataFoundException;
@@ -17,6 +19,7 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
     private final IRestaurantEntityMapper restaurantEntityMapper;
     private final IPageEntityMapper pageEntityMapper;
+    private final IPageListMapper pageListMapper;
     @Override
     public void saveRestaurant(Restaurant restaurant) {
 
@@ -24,13 +27,13 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     }
 
     @Override
-    public Page<Restaurant> getAllRestaurants(PageConfig pageConfig) {
+    public PageList<Restaurant> getAllRestaurants(PageConfig pageConfig) {
 
         Page<RestaurantEntity> restaurants = restaurantRepository.findAll(pageEntityMapper.toPageable(pageConfig));
         if (restaurants.isEmpty()) {
             throw new NoDataFoundException();
         }
-        return restaurantEntityMapper.toPageRestaurantList(restaurants);
+        return pageListMapper.toPageList(restaurantEntityMapper.toPageRestaurantList(restaurants));
     }
 
     @Override

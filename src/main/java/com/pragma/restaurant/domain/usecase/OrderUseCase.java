@@ -11,10 +11,10 @@ import com.pragma.restaurant.domain.exception.OrderNotActiveException;
 import com.pragma.restaurant.domain.model.Order;
 import com.pragma.restaurant.domain.model.OrderDish;
 import com.pragma.restaurant.domain.model.PageConfig;
+import com.pragma.restaurant.domain.model.PageList;
 import com.pragma.restaurant.domain.model.User;
 import com.pragma.restaurant.domain.spi.IOrderPersistencePort;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class OrderUseCase implements IOrderServicePort {
     }
 
     @Override
-    public Page<Order> getAllRestaurantOrders(Long idRestaurant, PageConfig pageable, Integer state) {
+    public PageList<Order> getAllRestaurantOrders(Long idRestaurant, PageConfig pageable, Integer state) {
         return orderPersistencePort.getAllRestaurantOrders(idRestaurant, pageable, state);
     }
 
